@@ -1,11 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>This is a test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI Bán Hàng Review</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(135deg, #0d47a1, #1976d2);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    .card {
+      max-width: 760px;
+      padding: 40px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
+      backdrop-filter: blur(18px);
+    }
+    h1 {
+      margin-bottom: 16px;
+      font-size: 3rem;
+      line-height: 1.05;
+    }
+    p {
+      margin-bottom: 28px;
+      font-size: 1.05rem;
+      opacity: 0.9;
+      line-height: 1.75;
+    }
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: #ffca28;
+      color: #0d47a1;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    }
+  </style>
 </head>
 <body>
-  
+  <div class="card">
+    <h1>Khám phá trải nghiệm mua sắm thông minh</h1>
+    <p>
+      Chào mừng đến với giao diện bán hàng hiện đại, nơi mỗi sản phẩm luôn sẵn sàng được đánh giá, 
+      chia sẻ và mua ngay lập tức. Đây là nền tảng lý tưởng để giới thiệu cửa hàng, dịch vụ hoặc dự án UI/UX của bạn.
+    </p>
+    <a class="btn" href="#">Bắt đầu ngay</a>
+  </div>
 </body>
 </html>
