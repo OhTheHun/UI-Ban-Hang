@@ -1,0 +1,74 @@
+
+.hero {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 60px 20px;
+  background-image: url('/image/anh-thuong-hieu-mabixi.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 140, 0, 0.75),
+      rgba(0, 0, 0, 0.5)
+    );
+
+    z-index: 1;
+  }
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 30px;
+  }
+}
+
+.hero-content {
+  flex: 1;
+  color: #fff; 
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.hero-subtitle {
+  font-size: 20px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .btn {
+    flex: 0 0 auto;
+  }
+}
+
+.hero-image {
+  display: none;
+}

@@ -1,0 +1,54 @@
+<header class="header-module_header">
+  <div class="wrapper-navbar_container">
+    <div class="navbar-left">
+      <div class="logo">
+        <a href="/">
+          <img src="/logo/MABIXI_logo.png" alt="MABIXI logo" />
+        </a>
+      </div>
+      <div class="store-switcher">
+        <div class="store-switcher__card">
+          <div class="store-switcher__content">
+            <img src="/logo/shipper.png" alt="Shipper" class="store-switcher__shipper-logo" />
+            <div class="store-switcher__text">
+              <button class="store-switcher__button" (click)="openAddressModal()">
+                Bạn muốn giao hàng đến địa chỉ nào?
+              </button>
+              <div class="store-switcher__current">{{ currentAddress }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-search">
+      <input 
+        type="text" 
+        class="navbar-search__input" 
+        placeholder="Tìm kiếm sản phẩm..." 
+      />
+      <button class="navbar-search__button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M21 21L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="navbar-actions">
+      <button class="navbar-actions__btn">
+        <img src="/logo/love-60.png" alt="Yêu thích" class="navbar-actions__icon" />
+        <span>Yêu thích</span>
+      </button>
+      <app-account-dropdown></app-account-dropdown>
+      <app-shopping-cart-dropdown></app-shopping-cart-dropdown>
+    </div>
+  </div>
+  <app-add-address 
+    [isOpen]="isAddressModalOpen" 
+    (close)="closeAddressModal()"
+    (submit)="onAddressSubmit($event)">
+  </app-add-address>
+
+  <app-sub-navbar></app-sub-navbar>
+</header>

@@ -1,0 +1,81 @@
+<div class="categories-dropdown-container">
+  <button
+    class="dropdown-trigger"
+    [class.active]="isOpen"
+    (mouseenter)="openDropdown()"
+    (mouseleave)="closeDropdown()"
+    aria-label="Danh mục sản phẩm">
+    <span class="trigger-text">Danh mục sản phẩm</span>
+    <svg class="dropdown-icon" [class.rotated]="isOpen" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div
+    class="dropdown-menu"
+    [class.show]="isOpen"
+    (mouseenter)="openDropdown()"
+    (mouseleave)="closeDropdown()">
+
+    <!-- Featured Categories Section -->
+    <div class="dropdown-section featured-section">
+      <div class="section-header">
+        <h3 class="section-title">Nổi bật</h3>
+      </div>
+      <div class="categories-grid">
+        <a
+          *ngFor="let category of featuredCategories"
+          [href]="category.href"
+          class="category-card featured-card"
+          (click)="onCategoryClick(category)">
+          <div class="category-icon">
+            <span class="icon-emoji">{{ category.icon }}</span>
+          </div>
+          <div class="category-info">
+            <h4 class="category-name">{{ category.label }}</h4>
+            <p class="category-desc">{{ category.description }}</p>
+          </div>
+          <div class="category-arrow">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M4.5 3L7.5 6L4.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Regular Categories Section -->
+    <div class="dropdown-section regular-section">
+      <div class="section-header">
+        <h3 class="section-title">Tất cả danh mục</h3>
+      </div>
+      <div class="categories-list">
+        <a
+          *ngFor="let category of regularCategories"
+          [href]="category.href"
+          class="category-item"
+          (click)="onCategoryClick(category)">
+          <div class="category-icon-small">
+            <span class="icon-emoji">{{ category.icon }}</span>
+          </div>
+          <span class="category-name">{{ category.label }}</span>
+          <div class="category-arrow-small">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M3.5 2.5L6.5 5.5L3.5 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="dropdown-footer">
+      <a href="/categories" class="view-all-link">
+        <span>Xem tất cả danh mục</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M5 3L9 7L5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>

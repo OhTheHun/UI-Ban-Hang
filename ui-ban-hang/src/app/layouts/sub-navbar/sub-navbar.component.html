@@ -1,0 +1,16 @@
+<header class="header-module_mabiximenu">
+  <nav class="sub-navbar">
+    <div class="container">
+      <ul class="menu-list">
+        <li class="menu-item">
+          <app-categories-dropdown (categorySelected)="onCategorySelected($event)"></app-categories-dropdown>
+        </li>
+        <li class="menu-item" *ngFor="let item of menuItems">
+          <a [href]="item.href" class="menu-link" [class.active]="item.active">
+            {{ item.label }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
