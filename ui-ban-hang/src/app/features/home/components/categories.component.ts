@@ -28,9 +28,9 @@ interface Category {
     </section>
   `,
   styleUrls: [
-  './home_scss/categories.component.scss',
-  './sections.scss'
-    ]
+    './home_scss/categories.component.scss',
+    './home_scss/sections.scss'
+  ]
 
 })
 export class CategoriesComponent {

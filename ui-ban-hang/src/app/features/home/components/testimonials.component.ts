@@ -20,7 +20,7 @@ interface Testimonial {
         <div class="testimonials-grid">
           <div class="testimonial-card" *ngFor="let testimonial of testimonials">
             <div class="testimonial-header">
-              <img [src]="testimonial.avatar" [alt]="testimonial.name" class="avatar" />
+              <!-- <img [src]="testimonial.avatar" [alt]="testimonial.name" class="avatar" /> -->
               <div class="testimonial-name">{{ testimonial.name }}</div>
             </div>
             <div class="stars-rating">
@@ -32,28 +32,28 @@ interface Testimonial {
       </div>
     </section>
   `,
-  styleUrl: './sections.scss'
+  styleUrl: './home_scss/sections.scss'
 })
 export class TestimonialsComponent {
   testimonials: Testimonial[] = [
     {
       id: 1,
       name: 'Nguyễn Thị Hương',
-      avatar: 'https://via.placeholder.com/60x60/0d47a1/ffffff?text=NTH',
+      avatar: 'https://ui-avatars.com/api/?name=NTH&background=0d47a1&color=fff',
       text: 'Sản phẩm chất lượng, giá cả hợp lý. Mình đã mua nhiều lần rồi, luôn hài lòng!',
       rating: 5
     },
     {
       id: 2,
       name: 'Trần Minh Tuấn',
-      avatar: 'https://via.placeholder.com/60x60/0d47a1/ffffff?text=TMT',
+      avatar: 'https://ui-avatars.com/api/?name=TMT&background=0d47a1&color=fff',
       text: 'Giao hàng nhanh, đóng gói cẩn thận. MABIXI làm ơn tiếp tục phục vụ nhé!',
       rating: 5
     },
     {
       id: 3,
       name: 'Hoàng Linh Chi',
-      avatar: 'https://via.placeholder.com/60x60/0d47a1/ffffff?text=HLC',
+      avatar: 'https://ui-avatars.com/api/?name=HLC&background=0d47a1&color=fff',
       text: 'Khô thịt ngon lắm, nhân viên tư vấn rất nhiệt tình. Sẽ ủng hộ đài!',
       rating: 4.5
     }

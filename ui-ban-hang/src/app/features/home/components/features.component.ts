@@ -26,7 +26,7 @@ interface Feature {
       </div>
     </section>
   `,
-  styleUrl: './sections.scss'
+  styleUrl: './home_scss/sections.scss'
 })
 export class FeaturesComponent {
   features: Feature[] = [
@@ -34,25 +34,25 @@ export class FeaturesComponent {
       id: 1,
       title: 'Chất Lượng Cao',
       description: 'Sản phẩm kiểm định, đảm bảo vệ sinh an toàn thực phẩm',
-      icon: '✓'
+      icon: ''
     },
     {
       id: 2,
       title: 'Giao Hàng Nhanh',
       description: 'Giao trong vòng 24-48h, toàn quốc',
-      icon: '⚡'
+      icon: ''
     },
     {
       id: 3,
       title: 'Giá Cạnh Tranh',
       description: 'Giá tốt nhất, thường xuyên có khuyến mãi',
-      icon: '💰'
+      icon: ''
     },
     {
       id: 4,
       title: 'Hỗ Trợ 24/7',
       description: 'Tư vấn, hỗ trợ khách hàng mọi lúc',
-      icon: '📞'
+      icon: ''
     }
   ];
 }

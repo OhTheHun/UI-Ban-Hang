@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     <section class="hero">
   <div class="hero-overlay">
     <div class="hero-content">
-      <h1 class="hero-title">MABIXI - Khô Thịt & Cơm Cháy Chất Lượng Bã Mía</h1>
+      <h1 class="hero-title">MABIXI - Khô Thịt & Cơm Cháy Chất Lượng Cao</h1>
       <p class="hero-subtitle">
         Sản phẩm chất lượng, giá tốt, giao hàng nhanh chóng. Khám phá ngay hôm nay!
       </p>
@@ -22,8 +22,8 @@ import { CommonModule } from '@angular/common';
 </section>
   `,
   styleUrls: [
-  './home_scss/hero.component.scss',
-  './sections.scss'
-]
+    './home_scss/hero.component.scss',
+    './home_scss/sections.scss'
+  ]
 })
-export class HeroComponent {}
+export class HeroComponent { }

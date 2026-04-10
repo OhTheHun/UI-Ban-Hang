@@ -29,7 +29,7 @@ interface Product {
         <div class="products-grid">
           <div class="product-card" *ngFor="let product of flashSaleProducts">
             <div class="product-image-wrapper">
-              <img [src]="product.image" [alt]="product.name" class="product-image" />
+              <!-- <img [src]="product.image" [alt]="product.name" class="product-image" /> -->
               <div class="product-badge flash-badge">
                 -{{ getDiscountPercent(product.price, product.originalPrice!) }}%
               </div>
@@ -54,7 +54,7 @@ interface Product {
       </div>
     </section>
   `,
-  styleUrls: ['./sections.scss', './home_scss/featured-products.component.scss']  
+  styleUrls: ['./home_scss/sections.scss', './home_scss/featured-products.component.scss']
 })
 export class FlashSaleComponent {
   @Input() flashSaleProducts: Product[] = [];

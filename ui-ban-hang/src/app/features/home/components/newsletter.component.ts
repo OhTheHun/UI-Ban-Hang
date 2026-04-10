@@ -19,6 +19,6 @@ import { CommonModule } from '@angular/common';
       </div>
     </section>
   `,
-  styleUrls: ['./sections.scss', './home_scss/featured-products.component.scss']  
+  styleUrls: ['./home_scss/sections.scss', './home_scss/featured-products.component.scss']
 })
-export class NewsletterComponent {}
+export class NewsletterComponent { }

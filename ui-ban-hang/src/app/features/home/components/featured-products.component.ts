@@ -23,7 +23,7 @@ interface Product {
         <div class="products-grid" *ngIf="products.length > 0">
           <div class="product-card" *ngFor="let product of products; trackBy: trackById">
             <div class="product-image-wrapper">
-              <img [src]="product.image" [alt]="product.name" class="product-image" />
+              <!-- <img [src]="product.image" [alt]="product.name" class="product-image" /> -->
               <div class="product-badge" *ngIf="product.originalPrice">
                 -{{ getDiscountPercent(product.price, product.originalPrice) }}%
               </div>
@@ -55,7 +55,7 @@ interface Product {
       </div>
     </section>
   `,
-  styleUrls: ['./sections.scss', './home_scss/featured-products.component.scss']
+  styleUrls: ['./home_scss/sections.scss', './home_scss/featured-products.component.scss']
 })
 export class FeaturedProductsComponent {
 
@@ -66,7 +66,7 @@ export class FeaturedProductsComponent {
       category: 'Khô Gà',
       price: 89000,
       originalPrice: 120000,
-      image: 'https://via.placeholder.com/300x300/ffca28/ffffff?text=Khô+Gà+Cay',
+      image: 'https://placehold.jp/300x300.png?text=Product',
       rating: 4.8,
       reviews: 245
     },
@@ -75,7 +75,7 @@ export class FeaturedProductsComponent {
       name: 'Khô Gà Nướp',
       category: 'Khô Gà',
       price: 79000,
-      image: 'https://via.placeholder.com/300x300/ffca28/ffffff?text=Khô+Gà+Nướp',
+      image: 'https://placehold.jp/300x300.png?text=Product',
       rating: 4.7,
       reviews: 189
     },
@@ -85,7 +85,7 @@ export class FeaturedProductsComponent {
       category: 'Khô Gà',
       price: 84000,
       originalPrice: 110000,
-      image: 'https://via.placeholder.com/300x300/ffca28/ffffff?text=Khô+Gà+Chanh',
+      image: 'https://placehold.jp/300x300.png?text=Product',
       rating: 4.9,
       reviews: 312
     },
@@ -94,13 +94,13 @@ export class FeaturedProductsComponent {
       name: 'Khô Gà Xốt Chuối',
       category: 'Khô Gà',
       price: 95000,
-      image: 'https://via.placeholder.com/300x300/ffca28/ffffff?text=Khô+Gà+Chuối',
+      image: 'https://placehold.jp/300x300.png?text=Product',
       rating: 4.6,
       reviews: 156
     }
   ];
 
-   trackById(index: number, item: Product) {
+  trackById(index: number, item: Product) {
     return item.id;
   }
 

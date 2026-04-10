@@ -10,7 +10,7 @@
           [src]="currentUser?.avatar"
           [alt]="currentUser?.name"
           class="avatar"
-          onerror="this.src='https://via.placeholder.com/40x40/9ca3af/ffffff?text=?'">
+          onerror="this.onerror=null;this.src='/logo/account.webp'">
       </ng-container>
       <ng-template #guestIcon>
         <img src="/logo/account.webp" alt="Tài khoản" class="account-icon-img" />
@@ -30,7 +30,7 @@
           [src]="currentUser?.avatar"
           [alt]="currentUser?.name"
           class="user-avatar"
-          onerror="this.src='https://via.placeholder.com/48x48/9ca3af/ffffff?text=?'">
+          onerror="this.onerror=null;this.src='/logo/account.webp'">
         <div class="user-info">
           <h4 class="user-name">{{ currentUser?.name }}</h4>
           <p class="user-email">{{ currentUser?.email }}</p>
@@ -83,19 +83,19 @@
 
         <div class="menu-divider"></div>
 
-        <button class="dropdown-item login-btn" (click)="onLogin()">
+        <a class="dropdown-item login-btn" routerLink="/login" (click)="closeDropdown()">
           <svg class="item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M11 16L7 12M7 12L11 8M7 12H21M16 16V18C16 18.5304 15.7893 19.0391 15.4142 19.4142C15.0391 19.7893 14.5304 20 14 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V6C4 5.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H14C14.5304 3 15.0391 3.21071 15.4142 3.58579C15.7893 3.96086 16 4.46957 16 6V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <span>Đăng nhập</span>
-        </button>
+        </a>
 
-        <button class="dropdown-item signup-btn" (click)="onSignup()">
+        <a class="dropdown-item signup-btn" routerLink="/register" (click)="closeDropdown()">
           <svg class="item-icon" width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M18 9V12M18 12V15M18 12H21M18 12H15M13 7C13 8.10457 12.1046 9 11 9C9.89543 9 9 8.10457 9 7C9 5.89543 9.89543 5 11 5C12.1046 5 13 5.89543 13 7ZM7 20C7 17.7909 8.79086 16 11 16C13.2091 16 15 17.7909 15 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <span>Đăng ký</span>
-        </button>
+        </a>
       </div>
     </ng-template>
   </div>
