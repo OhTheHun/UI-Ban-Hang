@@ -47,8 +47,12 @@
   margin-bottom: 16px;
   line-height: 1.2;
 
+  @media (max-width: 1024px) {
+    font-size: 36px;
+  }
+
   @media (max-width: 768px) {
-    font-size: 32px;
+    font-size: 28px;
   }
 }
 
@@ -57,12 +61,26 @@
   margin-bottom: 32px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
 }
 
 .hero-buttons {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    width: 100%;
+    
+    .btn {
+      width: 100%;
+    }
+  }
 
   .btn {
     flex: 0 0 auto;

@@ -35,21 +35,19 @@
 
     <!-- Error Message -->
     @if (errorMessage) {
-      <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3 border-0">
-        {{ errorMessage }}
-      </div>
+    <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3 border-0">
+      {{ errorMessage }}
+    </div>
     }
 
     <!-- Submit Button -->
-    <button 
-      type="submit" 
-      [disabled]="loginForm.invalid || isLoading"
+    <button type="submit" [disabled]="loginForm.invalid || isLoading"
       class="btn btn-brand w-100 py-3 fw-bold rounded-3 shadow-sm border-0 d-flex align-items-center justify-content-center">
       @if (isLoading) {
-        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-        Authenticating...
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Authenticating...
       } @else {
-        Login
+      Login
       }
     </button>
   </form>
@@ -64,30 +62,3 @@
     </p>
   </div>
 </div>
-
-<style>
-  .btn-brand {
-    background-color: #f49e0b;
-    color: #000;
-  }
-
-  .btn-brand:hover:not(:disabled) {
-    background-color: #d98c0a;
-  }
-
-  .custom-orange {
-    color: #f49e0b;
-  }
-
-  .hover-orange:hover {
-    color: #f49e0b !important;
-  }
-
-  .x-small {
-    font-size: 0.75rem;
-  }
-
-  .rounded-4 {
-    border-radius: 1rem !important;
-  }
-</style>

@@ -2,8 +2,7 @@ import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output, effe
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DropdownService } from '../services/dropdown.service';
-import { AuthService } from '../../core/services/auth.service';
-
+import { AuthService } from '../../features/auth/services/auth.service';
 @Component({
   selector: 'app-account-dropdown',
   standalone: true,
@@ -21,10 +20,10 @@ export class AccountDropdownComponent implements OnInit {
   currentUser: any = null;
 
   constructor(
-    private elementRef: ElementRef<HTMLElement>, 
+    private elementRef: ElementRef<HTMLElement>,
     private dropdownService: DropdownService,
     private authService: AuthService
-  ) { 
+  ) {
     // Reactive update when auth state changes
     effect(() => {
       this.isLoggedIn = this.authService.isLoggedIn();

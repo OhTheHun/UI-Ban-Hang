@@ -63,23 +63,36 @@
 /* Mobile responsive */
 @media (max-width: 768px) {
   .header-module_mabiximenu {
-    height: auto;
-    padding: 10px 0;
+    height: 50px;
+    padding: 0;
+    overflow: hidden;
   }
 
   .container {
-    padding: 0 15px;
+    padding: 0 10px;
   }
 
   .menu-list {
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 15px;
+    justify-content: flex-start;
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .menu-item {
+    flex-shrink: 0;
   }
 
   .menu-link {
-    font-size: 14px;
-    padding: 8px 0;
+    font-size: 13px;
+    padding: 5px 0;
+    white-space: nowrap;
   }
 }
 

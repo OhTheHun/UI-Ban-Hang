@@ -5,7 +5,21 @@
     box-shadow: 0 4px 12px rgba(255, 122, 24, 0.3);
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 20px;
+    flex-wrap: nowrap;
+    /* Keep items in one line where possible */
+
+    @media (max-width: 1024px) {
+        padding: 10px 16px;
+        gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+        flex-wrap: wrap;
+        /* Allow wrapping on mobile for stability */
+        justify-content: center;
+    }
 }
 
 .navbar-left {
@@ -15,126 +29,123 @@
 }
 
 .logo img {
-    height: 70px;
+    height: 60px;
     display: block;
     object-fit: contain;
+
+    @media (max-width: 768px) {
+        height: 45px;
+    }
 }
 
-.store-switcher {
-    display: flex;
-    align-items: center;
+.desktop-only {
+    @media (max-width: 1024px) {
+        display: none !important;
+    }
 }
 
 .store-switcher__card {
     background: white;
     border-radius: 40px;
-    padding: 10px 14px;
+    padding: 8px 14px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    min-width: 350px;
-    min-height: 48px;
+    min-width: 300px;
+
+    @media (max-width: 1024px) {
+        min-width: 150px;
+        padding: 4px 10px;
+    }
+
+    @media (max-width: 768px) {
+        min-width: 120px;
+    }
 }
 
 .store-switcher__content {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: center;
+    gap: 10px;
 }
 
 .store-switcher__shipper-logo {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #ffca28;
-    flex-shrink: 0;
-}
-
-.store-switcher__text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
 }
 
 .store-switcher__button {
     background: none;
     border: none;
-    padding: 0;
     color: #0d47a1;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: color 0.2s ease;
     text-align: left;
-    line-height: 1.4;
-}
 
-.store-switcher__button:hover {
-    color: #ffca28;
+    @media (max-width: 768px) {
+        font-size: 10px;
+    }
 }
 
 .store-switcher__current {
-    font-size: 12px;
+    font-size: 11px;
     color: #666;
-    margin-top: 6px;
-    line-height: 1.4;
-    max-height: 36px;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 200px;
+
+    @media (max-width: 768px) {
+        font-size: 9px;
+        max-width: 100px;
+    }
 }
 
 .navbar-search {
     flex: 1;
-    max-width: 700px;
+    max-width: 900px;
     position: relative;
     display: flex;
     align-items: center;
+
+    @media (max-width: 768px) {
+        order: 3;
+        flex-basis: 100%;
+        margin-top: 8px;
+    }
 }
 
 .navbar-search__input {
     width: 100%;
-    padding: 10px 40px 10px 14px;
+    padding: 10px 45px 10px 16px;
     border: 2px solid #ffca28;
     border-radius: 25px;
     font-size: 14px;
     background: white;
     color: #333;
     outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+    height: 44px;
 
-.navbar-search__input::placeholder {
-    color: #999;
-}
-
-.navbar-search__input:focus {
-    border-color: #ffb300;
-    box-shadow: 0 0 0 3px rgba(255, 202, 40, 0.2);
+    @media (max-width: 768px) {
+        height: 40px;
+        font-size: 13px;
+    }
 }
 
 .navbar-search__button {
     position: absolute;
-    right: 6px;
+    right: 5px;
     background: #ffca28;
     border: none;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     color: #0d47a1;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.navbar-search__button:hover {
-    background: #ffb300;
-    transform: scale(1.05);
-}
-
-.navbar-search__button:active {
-    transform: scale(0.95);
 }
 
 .navbar-actions {
@@ -142,74 +153,26 @@
     align-items: center;
     gap: 16px;
     flex-shrink: 0;
+
+    @media (max-width: 768px) {
+        gap: 8px;
+    }
 }
 
 .navbar-actions__btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     background: none;
     border: none;
-    padding: 8px 12px;
     color: #0d47a1;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
-    transition: color 0.2s ease, transform 0.2s ease;
-    border-radius: 8px;
-}
-
-.navbar-actions__btn:hover {
-    color: #ffca28;
-    transform: translateY(-2px);
-}
-
-.navbar-actions__btn:active {
-    transform: translateY(0);
-}
-
-.navbar-actions__btn svg {
-    width: 24px;
-    height: 24px;
-    stroke: currentColor;
 }
 
 .navbar-actions__icon {
     width: 24px;
     height: 24px;
-    object-fit: contain;
-    display: block;
-}
-
-@media (max-width: 640px) {
-    .wrapper-navbar_container {
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .navbar-left {
-        gap: 8px;
-        flex-basis: 100%;
-    }
-
-    .navbar-search {
-        flex-basis: 100%;
-        max-width: none;
-    }
-
-    .store-switcher__card {
-        min-width: 240px;
-        padding: 10px 12px;
-    }
-
-    .navbar-search__input {
-        font-size: 13px;
-        padding: 8px 36px 8px 12px;
-    }
-
-    .navbar-search__button {
-        width: 28px;
-        height: 28px;
-    }
 }

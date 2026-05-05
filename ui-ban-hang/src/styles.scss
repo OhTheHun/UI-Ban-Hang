@@ -3,4 +3,23 @@ body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #f8fafc;
+  overflow-x: hidden;
+}
+
+/* Helper classes for responsive */
+.desktop-only {
+  @media (max-width: 1024px) {
+    display: none !important;
+  }
+}
+
+.mobile-only {
+  @media (min-width: 1025px) {
+    display: none !important;
+  }
+}
+
+.container-fluid {
+    width: 100%;
+    margin: 0 auto;
 }

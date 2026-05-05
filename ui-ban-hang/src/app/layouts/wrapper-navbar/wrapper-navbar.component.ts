@@ -14,7 +14,17 @@ import { ShoppingCartDropdownComponent } from '../../shared/shopping-cart-dropdo
 })
 export class NavbarComponent {
   isAddressModalOpen = false;
+  isMenuOpen = false;
   currentAddress = 'Khu B, Khu đô thị An Phú An Khánh';
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+    if (this.isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }
 
   openAddressModal() {
     this.isAddressModalOpen = true;

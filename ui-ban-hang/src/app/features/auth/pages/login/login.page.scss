@@ -1,0 +1,24 @@
+  .btn-brand {
+      background-color: #f49e0b;
+      color: #000;
+  }
+
+  .btn-brand:hover:not(:disabled) {
+      background-color: #d98c0a;
+  }
+
+  .custom-orange {
+      color: #f49e0b;
+  }
+
+  .hover-orange:hover {
+      color: #f49e0b !important;
+  }
+
+  .x-small {
+      font-size: 0.75rem;
+  }
+
+  .rounded-4 {
+      border-radius: 1rem !important;
+  }
