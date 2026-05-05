@@ -1,0 +1,234 @@
+$primary: #0d47a1;
+$text-main: #0f172a;
+$text-sub: #475569;
+$text-muted: #94a3b8;
+$border: #e2e8f0;
+$radius-lg: 16px;
+
+.order-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0 8px;
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .order-stat {
+    font-size: 0.875rem;
+    color: $text-sub;
+    font-weight: 600;
+    background: #f1f5f9;
+    padding: 6px 16px;
+    border-radius: 20px;
+  }
+}
+
+.orders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-item-card {
+  background: white;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: 24px 32px;
+  display: grid;
+  grid-template-columns: 140px 1fr 140px 160px;
+  align-items: center;
+  gap: 24px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+    padding: 24px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+
+  .order-id-col {
+    .code {
+      font-weight: 800;
+      color: $primary;
+      font-size: 1.063rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .date {
+      font-size: 0.813rem;
+      color: $text-muted;
+      font-weight: 500;
+    }
+  }
+
+  .product-col {
+    .name {
+      font-weight: 700;
+      color: $text-main;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.813rem;
+      color: $primary;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      i {
+        transition: transform 0.2s;
+      }
+
+      &:hover {
+        color: #093373; /* Darker primary shade */
+        text-decoration: underline;
+
+        i {
+          transform: translateX(4px);
+        }
+      }
+    }
+  }
+
+  .amount-col {
+    text-align: right;
+
+    .label {
+      font-size: 0.75rem;
+      color: $text-muted;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .value {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: $text-main;
+    }
+  }
+
+  .status-col {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.status-pill {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+}
+
+.status-processing {
+  background: #eff6ff;
+  color: #2563eb;
+
+  &::before {
+    background: #2563eb;
+  }
+}
+
+.status-shipping {
+  background: #fffbeb;
+  color: #d97706;
+
+  &::before {
+    background: #d97706;
+  }
+}
+
+.status-delivered {
+  background: #f0fdf4;
+  color: #16a34a;
+
+  &::before {
+    background: #16a34a;
+  }
+}
+
+.status-cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+
+  &::before {
+    background: #dc2626;
+  }
+}
+
+.state-container {
+  padding: 80px 40px;
+  text-align: center;
+  background: white;
+  border: 2px dashed $border;
+  border-radius: $radius-lg;
+  color: $text-sub;
+
+  i {
+    font-size: 3rem;
+    color: $border;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-main;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 0.938rem;
+    margin-bottom: 24px;
+  }
+}
+
+.primary-btn {
+  padding: 12px 32px;
+  background: $primary;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}

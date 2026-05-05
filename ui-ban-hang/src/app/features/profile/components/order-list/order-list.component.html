@@ -1,0 +1,48 @@
+<div class="order-history-header">
+  <h3>Lịch sử mua hàng</h3>
+  <span class="order-stat">{{ orders.length }} đơn hàng đã đặt</span>
+</div>
+
+<div *ngIf="isLoading" class="state-container">
+  <div class="spinner"></div>
+  <h4>Đang lấy dữ liệu...</h4>
+  <p>Vui lòng đợi trong giây lát</p>
+</div>
+
+<div *ngIf="!isLoading && orders.length === 0" class="state-container">
+  <i class="ph-bold ph-package"></i>
+  <h4>Chưa có đơn hàng nào</h4>
+  <p>Hãy khám phá các sản phẩm tuyệt vời của chúng tôi và đặt đơn hàng đầu tiên.</p>
+  <button class="primary-btn">Tiếp tục mua sắm</button>
+</div>
+
+<div class="orders-grid" *ngIf="!isLoading && orders.length > 0">
+  <div *ngFor="let order of paginatedOrders()" class="order-item-card" (click)="onViewDetail.emit(order.invoiceId)">
+
+    <div class="order-id-col">
+      <span class="code">#{{ order.code }}</span>
+      <span class="date">{{ order.createdTime | date:'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+
+    <div class="product-col">
+      <button class="meta" (click)="$event.stopPropagation(); onViewDetail.emit(order.invoiceId)">
+        Xem chi tiết đơn hàng <i class="ph-bold ph-arrow-right"></i>
+      </button>
+    </div>
+
+    <div class="amount-col">
+      <span class="label">Tổng tiền</span>
+      <span class="value">{{ order.totalAmount | number }}đ</span>
+    </div>
+
+    <div class="status-col">
+      <span class="status-pill" [ngClass]="getStatusClass(order.status)">
+        {{ getStatusLabel(order.status) }}
+      </span>
+    </div>
+  </div>
+
+  <app-pagination [totalItems]="orders.length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+</div>

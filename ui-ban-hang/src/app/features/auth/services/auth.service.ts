@@ -3,25 +3,28 @@ import { HttpClient } from '@angular/common/http';
 import { tap, catchError, timeout } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 import { LoginRequest, AuthResponse, RegisterRequest, RegisterResponse, User } from '../models/auth.model';
+import { ConfigService } from '../../../core/services/config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly baseUrl = 'https://api-backendservice-hmfjfdgyhxfncghf.southeastasia-01.azurewebsites.net/api';
   private readonly TOKEN_KEY = 'mabixi_auth_token';
   private readonly USER_KEY = 'mabixi_auth_user';
-  private readonly TIMEOUT_MS = 4000; 
+  private readonly TIMEOUT_MS = 4000;
 
   private _user = signal<User | null>(this.getStoredUser());
 
   currentUser = computed(() => this._user());
   isLoggedIn = computed(() => !!this._user());
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private config: ConfigService
+  ) { }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(this.config.getEndpoint('auth/login'), credentials).pipe(
       timeout(this.TIMEOUT_MS),
       tap(response => {
         this.setSession(response, credentials);
@@ -37,7 +40,7 @@ export class AuthService {
   }
 
   register(userData: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.baseUrl}/user/register`, userData).pipe(
+    return this.http.post<RegisterResponse>(this.config.getEndpoint('user/register'), userData).pipe(
       timeout(this.TIMEOUT_MS),
       catchError(error => {
         const errorMsg = error.name === 'TimeoutError'

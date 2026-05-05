@@ -1,0 +1,72 @@
+<div class="profile-container">
+  <div class="profile-layout">
+    
+    <aside class="profile-sidebar">
+      <div class="user-summary-card">
+        <div class="avatar-container">
+          <img [src]="'https://ui-avatars.com/api/?name=' + (userProfile()?.fullName || 'User') + '&background=0d47a1&color=fff'" alt="User Avatar" class="avatar-img">
+          <div class="status-indicator"></div>
+        </div>
+        <div class="user-info">
+          <h2>{{ userProfile()?.fullName || 'Đang tải...' }}</h2>
+          <span>{{ userProfile()?.email }}</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item" 
+                [class.active]="activeTab() === 'profile'"
+                (click)="setTab('profile')">
+          <i class="ph-fill ph-user-circle"></i>
+          Thông tin cá nhân
+        </button>
+        <button class="nav-item" 
+                [class.active]="activeTab() === 'orders'"
+                (click)="setTab('orders')">
+          <i class="ph-fill ph-shopping-cart-simple"></i>
+          Lịch sử đơn hàng
+        </button>
+        
+        <div class="nav-divider"></div>
+        
+        <button class="nav-item logout-btn" (click)="logout()">
+          <i class="ph-bold ph-sign-out"></i>
+          Đăng xuất
+        </button>
+      </nav>
+    </aside>
+
+    <main class="profile-content">
+      @if (activeTab() === 'profile') {
+        <app-profile-info 
+          [profile]="userProfile()"
+          [isLoading]="isLoadingProfile()"
+          (onSave)="handleSaveProfile($event)">
+        </app-profile-info>
+      }
+
+      @if (activeTab() === 'orders') {
+        <app-order-list 
+          [orders]="orders()"
+          [isLoading]="isLoadingOrders()"
+          (onViewDetail)="viewOrderDetail($event)">
+        </app-order-list>
+      }
+    </main>
+  </div>
+</div>
+
+@if (selectedOrder(); as detail) {
+  <app-order-detail 
+    [order]="detail"
+    (onClose)="closeDetail()"
+    (onCancel)="handleCancelOrder($event)">
+  </app-order-detail>
+}
+
+@if (cancelInvoiceId()) {
+  <app-cancel-order-popup
+    (onConfirm)="confirmCancelOrder()"
+    (onCancel)="closeCancelPopup()">
+  </app-cancel-order-popup>
+}

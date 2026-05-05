@@ -1,0 +1,106 @@
+<div class="modal-backdrop" (click)="onClose.emit()">
+  <div class="modal-window" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div class="header-content">
+        <h2>Chi tiết đơn hàng</h2>
+        <span class="order-ref">Mã vận đơn: #{{ order.code }}</span>
+      </div>
+      <button class="close-btn" (click)="onClose.emit()">
+        <i class="ph-bold ph-x"></i>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <!-- 🕒 Professional Timeline -->
+      <div class="order-timeline">
+        @for (step of getTimelineSteps(); track step.label) {
+          <div class="timeline-step" [class]="step.status">
+            <div class="icon-wrapper">
+              <i [class]="'ph-fill ' + step.icon"></i>
+            </div>
+            <span class="label">{{ step.label }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="invoice-meta">
+        <div class="meta-item">
+          <label>Thời gian đặt</label>
+          <p>{{ order.createdTime | date:'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+        <div class="meta-item">
+          <label>Thanh toán</label>
+          <p>{{ order.paymentMethod }}</p>
+        </div>
+        <div class="meta-item">
+          <label>Trạng thái</label>
+          <span class="status-pill" [ngClass]="getStatusClass(order.status)">
+            {{ getStatusLabel(order.status) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="item-list-table">
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Số lượng</th>
+              <th>Đơn giá</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of order.items; track item.productName) {
+              <tr>
+                <td class="product-info">
+                  <p class="name">{{ item.productName }}</p>
+                  <span class="sku">SKU: {{ order.code }}-{{ item.productName.substring(0,2).toUpperCase() }}</span>
+                </td>
+                <td class="qty">×{{ item.quantity }}</td>
+                <td class="price-info">
+                  @if (item.discountPrice > 0) {
+                    <span class="original">{{ item.price | number }}đ</span>
+                    <span class="current">{{ (item.price - item.discountPrice) | number }}đ</span>
+                  } @else {
+                    <span class="current">{{ item.price | number }}đ</span>
+                  }
+                </td>
+                <td class="total-price">{{ item.total | number }}đ</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="invoice-footer">
+        <div class="total-box">
+          <div class="row">
+            <span>Tạm tính:</span>
+            <span>{{ order.totalAmount | number }}đ</span>
+          </div>
+          <div class="row">
+            <span>Phí vận chuyển:</span>
+            <span>0đ</span>
+          </div>
+          <div class="row final">
+            <label>Tổng thanh toán:</label>
+            <span class="amount">{{ order.totalAmount | number }}đ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="modal-actions">
+      @if (canCancel(order.status)) {
+        <button class="cancel-btn" (click)="onCancel.emit(order.invoiceId)">
+          <i class="ph-bold ph-prohibit"></i> Hủy đơn hàng
+        </button>
+      }
+      <button class="secondary-btn" (click)="printInvoice()">
+        <i class="ph-bold ph-printer"></i> In hóa đơn
+      </button>
+      <button class="primary-btn" (click)="onClose.emit()">Đóng</button>
+    </footer>
+  </div>
+</div>

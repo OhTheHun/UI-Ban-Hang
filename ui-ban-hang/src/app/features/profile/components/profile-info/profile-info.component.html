@@ -1,0 +1,43 @@
+<div class="info-card">
+  <div class="card-header">
+    <h3>Thông tin tài khoản</h3>
+    <button class="action-btn" [class.edit-mode]="isEditing()" (click)="toggleEdit()" [disabled]="isLoading">
+      <i class="ph-bold" [class.ph-pencil-simple]="!isEditing()" [class.ph-check]="isEditing()"></i>
+      {{ isEditing() ? 'Lưu thông tin' : 'Chỉnh sửa' }}
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Đang tải thông tin...</p>
+    </div>
+  } @else {
+    <div class="form-grid">
+      <div class="input-wrapper">
+        <label>Họ và tên</label>
+        <input type="text" [(ngModel)]="editForm.fullName" [readonly]="!isEditing()" placeholder="Nhập họ và tên">
+      </div>
+      
+      <div class="input-wrapper">
+        <label>Email liên hệ</label>
+        <input type="email" [(ngModel)]="editForm.email" [readonly]="true" placeholder="example@mail.com">
+      </div>
+
+      <div class="input-wrapper">
+        <label>Số điện thoại</label>
+        <input type="tel" [(ngModel)]="editForm.phone" [readonly]="!isEditing()" placeholder="0xxx xxx xxx">
+      </div>
+
+      <div class="input-wrapper">
+        <label>Vai trò</label>
+        <input type="text" [value]="editForm.role || 'Khách hàng'" readonly>
+      </div>
+
+      <div class="input-wrapper full-width">
+        <label>Địa chỉ giao hàng</label>
+        <textarea [(ngModel)]="editForm.address" [readonly]="!isEditing()" rows="3" placeholder="Số nhà, tên đường, quận/huyện..."></textarea>
+      </div>
+    </div>
+  }
+</div>

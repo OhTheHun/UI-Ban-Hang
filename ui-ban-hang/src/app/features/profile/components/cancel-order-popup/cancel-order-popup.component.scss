@@ -1,0 +1,105 @@
+$primary: #0d47a1;
+$danger: #dc2626;
+$danger-bg: #fef2f2;
+$text-main: #0f172a;
+$text-sub: #475569;
+$border: #e2e8f0;
+
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* Above modal */
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.popup-window {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.popup-icon-warning {
+  width: 64px;
+  height: 64px;
+  background: $danger-bg;
+  color: $danger;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 20px;
+}
+
+.popup-content {
+  margin-bottom: 32px;
+  
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: $text-main;
+    margin: 0 0 12px 0;
+  }
+
+  p {
+    font-size: 0.938rem;
+    color: $text-sub;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.popup-actions {
+  display: flex;
+  gap: 12px;
+
+  button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.938rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-cancel {
+    background: white;
+    border: 1px solid $border;
+    color: $text-main;
+
+    &:hover {
+      background: #f8fafc;
+    }
+  }
+
+  .btn-confirm {
+    background: $danger;
+    border: none;
+    color: white;
+
+    &:hover {
+      background: #b91c1c; /* darken($danger, 10%) equivalent */
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

@@ -1,0 +1,17 @@
+<div class="popup-backdrop" (click)="onCancel.emit()">
+  <div class="popup-window" (click)="$event.stopPropagation()">
+    <div class="popup-icon-warning">
+      <i class="ph-fill ph-warning-circle"></i>
+    </div>
+    
+    <div class="popup-content">
+      <h3>Xác nhận hủy đơn</h3>
+      <p>Bạn có chắc chắn muốn hủy đơn hàng này không? Thao tác này không thể hoàn tác.</p>
+    </div>
+
+    <div class="popup-actions">
+      <button class="btn-cancel" (click)="onCancel.emit()">Quay lại</button>
+      <button class="btn-confirm" (click)="onConfirm.emit()">Đồng ý hủy</button>
+    </div>
+  </div>
+</div>
