@@ -34,7 +34,6 @@ export class OrderService {
    * @param invoiceId The invoice ID
    */
   cancelOrder(invoiceId: string): Observable<any> {
-    // Assuming cancel uses the invoice ID in the URL or body based on the requirement
-    return this.http.put(this.config.getEndpoint(`invoice/cancel/${invoiceId}`), {});
+    return this.http.put(this.config.getEndpoint(`invoice/cancel/${invoiceId}`), {});  
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../auth/services/auth.service';
 import { OrderService } from './services/order.service';
@@ -10,7 +11,6 @@ import { UserProfileResponse } from './models/user.model';
 import { OrderSummary, OrderDetail } from './models/order.model';
 import { User } from '../auth/models/auth.model';
 
-// Sub-components organized in folders
 import { ProfileInfoComponent } from './components/profile-info/profile-info.component';
 import { OrderListComponent } from './components/order-list/order-list.component';
 import { OrderDetailComponent } from './components/order-detail/order-detail.component';
@@ -20,10 +20,10 @@ import { CancelOrderPopupComponent } from './components/cancel-order-popup/cance
   selector: 'app-profile',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    ProfileInfoComponent, 
-    OrderListComponent, 
+    CommonModule,
+    FormsModule,
+    ProfileInfoComponent,
+    OrderListComponent,
     OrderDetailComponent,
     CancelOrderPopupComponent
   ],
@@ -32,9 +32,9 @@ import { CancelOrderPopupComponent } from './components/cancel-order-popup/cance
 })
 export class ProfileComponent implements OnInit {
   public readonly activeTab = signal<'profile' | 'orders'>('profile');
-  
+
   private readonly authUser = computed(() => this.authService.currentUser());
-  
+
   public readonly userProfile = signal<UserProfileResponse | null>(null);
   public readonly isLoadingProfile = signal<boolean>(false);
 
@@ -45,8 +45,9 @@ export class ProfileComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private orderService: OrderService,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     const user = this.authUser();
@@ -54,6 +55,14 @@ export class ProfileComponent implements OnInit {
       this.loadUserProfile(user.id.toString());
       this.loadOrders(user.id.toString());
     }
+
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'orders') {
+        this.activeTab.set('orders');
+      } else {
+        this.activeTab.set('profile');
+      }
+    });
   }
 
   loadUserProfile(userId: string): void {
@@ -107,11 +116,9 @@ export class ProfileComponent implements OnInit {
     this.selectedOrder.set(null);
   }
 
-  // --- 🛑 Cancel Order Flow ---
   cancelInvoiceId = signal<string | null>(null);
 
   handleCancelOrder(invoiceId: string): void {
-    // Open the popup instead of using window.confirm
     this.cancelInvoiceId.set(invoiceId);
   }
 
@@ -153,7 +160,7 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
-  
+
   logout(): void {
     this.authService.logout();
   }

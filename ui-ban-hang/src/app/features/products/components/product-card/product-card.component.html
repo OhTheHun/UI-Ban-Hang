@@ -1,0 +1,64 @@
+<div class="product-card">
+
+  <div class="product-image">
+    <img [src]="product.image_Url || fallbackImage" [alt]="product.productName" loading="lazy"
+      (error)="onImageError($event)" />
+  </div>
+
+  <div class="product-info">
+
+    <!-- PRICE -->
+    <div class="price-section">
+      <span class="current-price">
+        {{ product.currentPrice | number:'1.0-0' }} đ
+      </span>
+
+      <span class="unit" *ngIf="product.donViTinh as dvt">
+        / {{ dvt.ten }}
+      </span>
+    </div>
+
+    <!-- DISCOUNT -->
+    <ng-container *ngIf="product.hasDiscount; else noDiscount">
+      <div class="discount-section">
+        <span class="original-price">
+          {{ product.price | number:'1.0-0' }} đ
+        </span>
+        <span class="discount-badge">
+          -{{ product.discountPercent }}%
+        </span>
+      </div>
+    </ng-container>
+
+    <ng-template #noDiscount>
+      <div class="discount-section empty"></div>
+    </ng-template>
+
+    <!-- NAME -->
+    <h3 class="product-name" [title]="product.productName">
+      {{ product.productName }}
+    </h3>
+
+    <!-- SHIPPING ICON -->
+    <div class="shipping-info">
+      <svg width="16" height="16">
+        <use href="assets/icons/icons.svg#icon-truck"></use>
+      </svg>
+      <span>Giao hàng tận nơi</span>
+    </div>
+
+    <!-- ACTION -->
+    <div class="actions">
+      <button class="favorite-btn" (click)="toggleFavorite()">
+        <svg width="20" height="20">
+          <use href="assets/icons/icons.svg#icon-heart"></use>
+        </svg>
+      </button>
+
+      <button class="cart-btn" (click)="addToCart()">
+        Thêm vào giỏ
+      </button>
+    </div>
+
+  </div>
+</div>

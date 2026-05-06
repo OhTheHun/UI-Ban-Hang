@@ -2,6 +2,7 @@ import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, catchError, timeout } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 import { LoginRequest, AuthResponse, RegisterRequest, RegisterResponse, User } from '../models/auth.model';
 import { ConfigService } from '../../../core/services/config.service';
 
@@ -18,9 +19,14 @@ export class AuthService {
   currentUser = computed(() => this._user());
   isLoggedIn = computed(() => !!this._user());
 
+  hasRole(role: string): boolean {
+    return this._user()?.role === role;
+  }
+
   constructor(
     private http: HttpClient,
-    private config: ConfigService
+    private config: ConfigService,
+    private router: Router
   ) { }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
@@ -53,17 +59,18 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+    sessionStorage.removeItem(this.TOKEN_KEY);
+    sessionStorage.removeItem(this.USER_KEY);
     this._user.set(null);
+    this.router.navigate(['/']);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
   private setSession(authResult: AuthResponse, credentials?: LoginRequest): void {
-    localStorage.setItem(this.TOKEN_KEY, authResult.accessToken);
+    sessionStorage.setItem(this.TOKEN_KEY, authResult.accessToken);
 
     const user: User = {
       id: authResult.userId,
@@ -73,12 +80,12 @@ export class AuthService {
       role: authResult.role || 'Customer'
     };
 
-    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
     this._user.set(user);
   }
 
   private getStoredUser(): User | null {
-    const userJson = localStorage.getItem(this.USER_KEY);
+    const userJson = sessionStorage.getItem(this.USER_KEY);
     return userJson ? JSON.parse(userJson) : null;
   }
 }

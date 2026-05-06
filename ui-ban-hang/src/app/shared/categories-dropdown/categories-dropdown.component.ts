@@ -1,5 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { ProductService } from '../../features/products/services/product.service';
+import { Category as ApiCategory } from '../../features/products/models/product.model';
 
 interface Category {
   id: number;
@@ -13,78 +16,32 @@ interface Category {
 @Component({
   selector: 'app-categories-dropdown',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './categories-dropdown.component.html',
   styleUrl: './categories-dropdown.component.scss'
 })
-export class CategoriesDropdownComponent {
+export class CategoriesDropdownComponent implements OnInit {
   @Output() categorySelected = new EventEmitter<Category>();
 
   isOpen = false;
+  categories: Category[] = [];
 
-  categories: Category[] = [
-    {
-      id: 1,
-      label: 'Điện thoại',
-      href: '/categories/phones',
-      icon: '📱',
-      description: 'Smartphone mới nhất',
-      featured: true
-    },
-    {
-      id: 2,
-      label: 'Laptop',
-      href: '/categories/laptops',
-      icon: '💻',
-      description: 'Máy tính xách tay',
-      featured: true
-    },
-    {
-      id: 3,
-      label: 'Tablet',
-      href: '/categories/tablets',
-      icon: '📱',
-      description: 'Máy tính bảng'
-    },
-    {
-      id: 4,
-      label: 'Phụ kiện',
-      href: '/categories/accessories',
-      icon: '🎧',
-      description: 'Phụ kiện công nghệ'
-    },
-    {
-      id: 5,
-      label: 'Smartwatch',
-      href: '/categories/smartwatches',
-      icon: '⌚',
-      description: 'Đồng hồ thông minh'
-    },
-    {
-      id: 6,
-      label: 'Gaming',
-      href: '/categories/gaming',
-      icon: '🎮',
-      description: 'Thiết bị gaming'
-    },
-    {
-      id: 7,
-      label: 'Âm thanh',
-      href: '/categories/audio',
-      icon: '🔊',
-      description: 'Tai nghe, loa'
-    },
-    {
-      id: 8,
-      label: 'TV & Màn hình',
-      href: '/categories/tvs',
-      icon: '📺',
-      description: 'Smart TV, màn hình'
-    }
-  ];
+  constructor(private productService: ProductService) {}
 
-  featuredCategories = this.categories.filter(cat => cat.featured);
-  regularCategories = this.categories.filter(cat => !cat.featured);
+  ngOnInit() {
+    this.productService.getCategories().subscribe({
+      next: (apiCategories) => {
+        this.categories = apiCategories.map((c) => ({
+          id: c.id as any,
+          label: c.tenDanhMuc,
+          href: `/products?category=${c.id}`,
+          description: c.description,
+          icon: '' // Unused now
+        }));
+      },
+      error: (err) => console.error('Failed to load categories', err)
+    });
+  }
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;

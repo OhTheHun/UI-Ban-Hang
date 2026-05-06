@@ -23,8 +23,8 @@
     </div>
 
     <div class="navbar-search">
-      <input type="text" class="navbar-search__input" placeholder="Tìm kiếm sản phẩm..." />
-      <button class="navbar-search__button">
+      <input #searchInput type="text" class="navbar-search__input" placeholder="Tìm kiếm sản phẩm..." (keyup.enter)="onSearch(searchInput.value)" />
+      <button class="navbar-search__button" (click)="onSearch(searchInput.value)">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
           <path d="M21 21L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />

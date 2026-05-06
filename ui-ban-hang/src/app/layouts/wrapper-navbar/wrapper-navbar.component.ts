@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { SubNavbarComponent } from '../sub-navbar/sub-navbar.component';
 import { AddAddressComponent } from '../../shared/add-address/add-address.component';
 import { AccountDropdownComponent } from '../../shared/account-dropdown/account-dropdown.component';
@@ -16,6 +17,14 @@ export class NavbarComponent {
   isAddressModalOpen = false;
   isMenuOpen = false;
   currentAddress = 'Khu B, Khu đô thị An Phú An Khánh';
+  
+  private router = inject(Router);
+
+  onSearch(keyword: string) {
+    if (keyword && keyword.trim()) {
+      this.router.navigate(['/products'], { queryParams: { keyword: keyword.trim() } });
+    }
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
