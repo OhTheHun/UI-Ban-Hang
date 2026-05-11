@@ -1,0 +1,61 @@
+<div class="page-layout">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2 class="title">Quản lý Nhà cung cấp</h2>
+      <p class="subtitle">Danh sách các đối tác cung cấp hàng hóa cho hệ thống.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary">
+        <i class="ph ph-plus"></i> Thêm nhà cung cấp
+      </button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>TÊN NHÀ CUNG CẤP</th>
+            <th>LIÊN HỆ</th>
+            <th>MÃ SỐ THUẾ</th>
+            <th>LĨNH VỰC</th>
+            <th>TRẠNG THÁI</th>
+            <th>THAO TÁC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td colspan="6" class="text-center py-8">Đang tải...</td>
+          </tr>
+          <tr *ngFor="let supplier of suppliers">
+            <td>
+              <div class="supplier-cell">
+                <div class="name">{{ supplier.supplierName }}</div>
+                <div class="contact-person">{{ supplier.contactName }}</div>
+              </div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <div><i class="ph ph-phone"></i> {{ supplier.contactPhone }}</div>
+              </div>
+            </td>
+            <td>{{ supplier.mst }}</td>
+            <td>{{ supplier.field }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(supplier.status)">
+                {{ getStatusLabel(supplier.status) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="btn-icon"><i class="ph ph-pencil-simple"></i></button>
+                <button class="btn-icon text-red"><i class="ph ph-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -2,14 +2,14 @@
   <button class="cart-trigger" (click)="toggleDropdown()" aria-label="Giỏ hàng">
     <img src="/logo/shopping-cart.png" alt="Giỏ hàng" class="cart-icon" />
     <span class="cart-label">Giỏ hàng</span>
-    <span class="cart-count" *ngIf="totalItems > 0">{{ totalItems }}</span>
+    <span class="cart-count" *ngIf="totalItems() > 0">{{ totalItems() }}</span>
   </button>
 
   <div class="dropdown-menu" [class.show]="isOpen">
 
     <!-- Cart Items -->
-    <div class="cart-items" *ngIf="cartItems.length > 0; else emptyCart">
-      <div class="cart-item" *ngFor="let item of cartItems" (click)="onCartItemClick(item)">
+    <div class="cart-items" *ngIf="cartItems().length > 0; else emptyCart">
+      <div class="cart-item" *ngFor="let item of cartItems()">
         <img [src]="item.image" [alt]="item.name" class="item-image" />
         <div class="item-details">
           <h4 class="item-name">{{ item.name }}</h4>
@@ -18,7 +18,7 @@
             <span class="quantity">x{{ item.quantity }}</span>
           </div>
         </div>
-        <button class="remove-btn" (click)="onRemoveItem(item); $event.stopPropagation()">
+        <button class="remove-btn" (click)="onRemoveItem(item.id); $event.stopPropagation()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" />
@@ -40,10 +40,10 @@
     </ng-template>
 
     <!-- Cart Footer -->
-    <div class="cart-footer" *ngIf="cartItems.length > 0">
+    <div class="cart-footer" *ngIf="cartItems().length > 0">
       <div class="cart-total">
         <span class="total-label">Tổng cộng:</span>
-        <span class="total-price">{{ totalPrice | number:'1.0-0':'vi-VN' }}₫</span>
+        <span class="total-price">{{ totalPrice() | number:'1.0-0':'vi-VN' }}₫</span>
       </div>
       <button class="view-cart-btn" (click)="onViewCart()">
         Xem giỏ hàng

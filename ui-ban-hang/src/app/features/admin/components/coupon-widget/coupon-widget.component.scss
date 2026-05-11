@@ -1,0 +1,55 @@
+.coupons-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  
+  .card-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    
+    .title { font-size: 16px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px; i { color: #0066cc; font-size: 20px; } }
+    .btn-add { background: #0066cc; color: white; border: none; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  }
+
+  .coupon-list {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .coupon-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      border-left: 4px solid #10b981;
+      
+      &.expired { border-left-color: #cbd5e1; background: #f8fafc; opacity: 0.7; }
+      
+      .c-left {
+        .c-code { font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .badge { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #dcfce7; color: #166534; }
+        .badge.expired-badge { background: #e2e8f0; color: #475569; }
+        .c-date { font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 4px; }
+      }
+      
+      .c-right { font-weight: 800; font-size: 16px; color: #64748b; }
+      .c-right.red { color: #ef4444; }
+      .c-right.blue { color: #3b82f6; }
+    }
+  }
+
+  .card-footer {
+    padding: 16px;
+    text-align: center;
+    border-top: 1px solid #f1f5f9;
+    a { color: #0066cc; font-weight: 600; font-size: 13px; text-decoration: none; }
+  }
+}

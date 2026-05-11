@@ -58,6 +58,10 @@
   font-size: 12px;
   color: #374151;
   transition: color 0.2s ease;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .account-trigger:hover .account-label {

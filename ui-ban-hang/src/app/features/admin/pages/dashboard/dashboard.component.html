@@ -1,0 +1,295 @@
+<div class="page-layout">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-titles">
+      <h2 class="title">Báo cáo tài chính chi tiết</h2>
+      <p class="subtitle">Tổng quan tình hình thu chi và lợi nhuận doanh nghiệp.</p>
+    </div>
+
+    <div class="header-filters">
+      <div class="view-toggles">
+        <button type="button" class="active">Tháng</button>
+        <button type="button">Quý</button>
+        <button type="button">Năm</button>
+      </div>
+
+      <select class="date-select">
+        <option>{{ today }}</option>
+      </select>
+
+      <button type="button" class="btn-outline">
+        <i class="ph ph-file-pdf"></i> PDF
+      </button>
+
+      <button type="button" class="btn-outline">
+        <i class="ph ph-file-xls"></i> Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loader"></div>
+    <p>Đang tải dữ liệu...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="error-box" *ngIf="!loading && errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid" *ngIf="stats && !loading">
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <p class="kpi-label">Tổng doanh thu</p>
+        <div class="kpi-icon bg-blue-soft">
+          <i class="ph ph-wallet"></i>
+        </div>
+      </div>
+
+      <h3 class="kpi-value">
+        {{ formatCurrency(stats.totalRevenue) }}
+      </h3>
+
+      <p class="kpi-trend" [ngClass]="stats.revenueChangePercent >= 0 ? 'positive' : 'negative'">
+        <i class="ph" [ngClass]="stats.revenueChangePercent >= 0 ? 'ph-trend-up' : 'ph-trend-down'"></i>
+        {{ stats.revenueChangePercent > 0 ? '+' : '' }}{{ stats.revenueChangePercent }}%
+        <span>so với tháng trước</span>
+      </p>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <p class="kpi-label">Tổng lợi nhuận</p>
+        <div class="kpi-icon bg-green-soft">
+          <i class="ph ph-piggy-bank"></i>
+        </div>
+      </div>
+
+      <h3 class="kpi-value">
+        {{ formatCurrency(stats.totalProfit) }}
+      </h3>
+
+      <p class="kpi-trend" [ngClass]="stats.profitChangePercent >= 0 ? 'positive' : 'negative'">
+        <i class="ph" [ngClass]="stats.profitChangePercent >= 0 ? 'ph-trend-up' : 'ph-trend-down'"></i>
+        {{ stats.profitChangePercent > 0 ? '+' : '' }}{{ stats.profitChangePercent }}%
+        <span>so với tháng trước</span>
+      </p>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <p class="kpi-label">Tổng đơn hàng</p>
+        <div class="kpi-icon bg-purple-soft">
+          <i class="ph ph-shopping-cart"></i>
+        </div>
+      </div>
+
+      <h3 class="kpi-value">
+        {{ stats.totalOrders }}
+      </h3>
+
+      <p class="kpi-trend" [ngClass]="stats.ordersChangePercent >= 0 ? 'positive' : 'negative'">
+        <i class="ph" [ngClass]="stats.ordersChangePercent >= 0 ? 'ph-trend-up' : 'ph-trend-down'"></i>
+        {{ stats.ordersChangePercent > 0 ? '+' : '' }}{{ stats.ordersChangePercent }}%
+        <span>so với tháng trước</span>
+      </p>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <p class="kpi-label">Khách hàng mới</p>
+        <div class="kpi-icon bg-yellow-soft">
+          <i class="ph ph-users"></i>
+        </div>
+      </div>
+
+      <h3 class="kpi-value">
+        {{ stats.newCustomers }}
+      </h3>
+
+      <p class="kpi-trend" [ngClass]="stats.customersChangePercent >= 0 ? 'positive' : 'negative'">
+        <i class="ph" [ngClass]="stats.customersChangePercent >= 0 ? 'ph-trend-up' : 'ph-trend-down'"></i>
+        {{ stats.customersChangePercent > 0 ? '+' : '' }}{{ stats.customersChangePercent.toFixed(2) }}%
+        <span>so với tháng trước</span>
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid" *ngIf="!loading">
+
+    <div class="chart-card main-chart">
+      <div class="chart-header">
+        <h4>So sánh Doanh thu & Lợi nhuận</h4>
+
+        <button type="button" class="btn-more">
+          <i class="ph ph-dots-three"></i>
+        </button>
+      </div>
+
+      <div class="chart-placeholder">
+
+        <div class="fake-line-chart">
+
+          <svg viewBox="0 0 500 200" preserveAspectRatio="none">
+            <path d="M0,180 Q100,140 200,120 T400,80 T500,40" fill="none" stroke="#0066cc" stroke-width="3" />
+
+            <path d="M0,195 Q100,190 200,170 T400,140 T500,120" fill="none" stroke="#10b981" stroke-width="2"
+              stroke-dasharray="6,4" />
+          </svg>
+
+          <div class="grid-lines">
+            <span>4B</span>
+            <span>3B</span>
+            <span>2B</span>
+            <span>1B</span>
+            <span>0</span>
+          </div>
+
+          <div class="x-axis">
+            <span *ngFor="let item of chartData">
+              {{ item.label }}
+            </span>
+          </div>
+
+        </div>
+
+        <div class="chart-legend">
+          <span class="legend-item">
+            <i class="dot blue"></i>
+            Doanh thu
+          </span>
+
+          <span class="legend-item">
+            <i class="dot green"></i>
+            Lợi nhuận
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="chart-card donut-chart">
+      <div class="chart-header">
+        <h4>Cơ cấu doanh thu</h4>
+
+        <button type="button" class="btn-more">
+          <i class="ph ph-dots-three"></i>
+        </button>
+      </div>
+
+      <div class="donut-wrapper">
+        <div class="donut-container">
+
+          <div class="pie-chart"></div>
+
+          <div class="donut-center">
+            <span class="lab">Tổng doanh thu</span>
+
+            <span class="val">
+              {{ formatCurrency(stats.totalRevenue) }}
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Transactions -->
+  <div class="table-card transactions" *ngIf="!loading">
+
+    <div class="card-header">
+      <h4>Chi tiết giao dịch gần đây</h4>
+
+      <div class="search-box">
+        <i class="ph ph-magnifying-glass"></i>
+        <input type="text" placeholder="Tìm mã GD..." />
+      </div>
+
+      <button type="button" class="btn-filter">
+        <i class="ph ph-funnel"></i>
+      </button>
+    </div>
+
+    <table class="data-table">
+
+      <thead>
+        <tr>
+          <th>MÃ GD</th>
+          <th>KHÁCH HÀNG</th>
+          <th>SỐ TIỀN</th>
+          <th>TRẠNG THÁI</th>
+          <th>NGÀY THỰC HIỆN</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let tx of recentTransactions; trackBy: trackByTransaction">
+
+          <td class="tx-id">
+            #{{ tx.code.substring(0, 8) }}
+          </td>
+
+          <td>
+            {{ tx.customerName }}
+          </td>
+
+          <td class="amount">
+            {{ formatCurrency(tx.totalAmount) }}
+          </td>
+
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(tx.status)">
+              {{ getStatusText(tx.status) }}
+            </span>
+          </td>
+
+          <td>
+            {{ tx.date | date:'dd/MM/yyyy HH:mm' }}
+          </td>
+
+          <td>
+            <button type="button" class="btn-more">
+              <i class="ph ph-dots-three-vertical"></i>
+            </button>
+          </td>
+
+        </tr>
+
+        <tr *ngIf="recentTransactions.length === 0">
+          <td colspan="6" class="text-center py-4">
+            Không có giao dịch gần đây
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="pagination-footer">
+
+      <div class="info">
+        Tổng giao dịch: {{ recentTransactions.length }}
+      </div>
+
+      <div class="pagination">
+        <button type="button">
+          <i class="ph ph-caret-left"></i>
+        </button>
+
+        <button type="button">
+          <i class="ph ph-caret-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -33,8 +33,17 @@ export class LoginPageComponent {
       this.errorMessage = '';
 
       this.authService.login(this.loginForm.value).subscribe({
-        next: () => {
-          this.router.navigate(['/']);
+        next: (res) => {
+          const user = this.authService.currentUser();
+          const managementRoles = ['Admin', 'Seller', 'WarehouseManager'];
+          
+          if (user && managementRoles.includes(user.role)) {
+            this.authService.logout();
+            this.errorMessage = 'Tài khoản quản trị vui lòng đăng nhập tại trang Admin.';
+            this.isLoading = false;
+          } else {
+            this.router.navigate(['/']);
+          }
         },
         error: (err) => {
           this.isLoading = false;

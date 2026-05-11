@@ -1,0 +1,22 @@
+.revenue-card {
+  background: #0052cc;
+  border-radius: 12px;
+  padding: 24px;
+  color: white;
+  
+  .label { font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.8; margin: 0 0 8px 0; }
+  .val { font-size: 28px; font-weight: 800; margin: 0 0 24px 0; }
+  
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 16px;
+    
+    .stat {
+      p { font-size: 12px; opacity: 0.8; margin: 0 0 4px 0; }
+      h3 { font-size: 18px; font-weight: 700; margin: 0; }
+      .trend { color: #4ade80; display: flex; align-items: center; gap: 4px; }
+    }
+  }
+}

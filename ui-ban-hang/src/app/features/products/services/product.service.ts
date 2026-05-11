@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Product, Category } from '../models/product.model';
 import { ConfigService } from '../../../core/services/config.service';
 
@@ -14,7 +14,9 @@ export class ProductService {
   ) {}
 
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.config.getEndpoint('Categories'));
+    return this.http.get<any>(this.config.getEndpoint('category')).pipe(
+      map((res: any) => res?.data || res || [])
+    );
   }
 
   searchProducts(keyword?: string): Observable<Product[]> {
@@ -27,5 +29,9 @@ export class ProductService {
 
   getProductsByCategory(categoryId: string): Observable<Product[]> {
     return this.http.get<Product[]>(this.config.getEndpoint(`product/list/${categoryId}`));
+  }
+
+  getProductById(id: string): Observable<Product> {
+    return this.http.get<Product>(this.config.getEndpoint(`product/${id}`));
   }
 }

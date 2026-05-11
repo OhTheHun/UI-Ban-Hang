@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
 import { OrderService } from './services/order.service';
 import { UserService } from './services/user.service';
+import { ToastService } from '../../core/services/toast.service';
 import { UserProfileResponse } from './models/user.model';
 import { OrderSummary, OrderDetail } from './models/order.model';
 import { User } from '../auth/models/auth.model';
@@ -46,7 +47,8 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     private orderService: OrderService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -107,7 +109,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load order detail', err);
-        alert('Không thể tải chi tiết đơn hàng. Vui lòng kiểm tra Console (F12).');
+        this.toastService.error('Không thể tải chi tiết đơn hàng. Vui lòng kiểm tra Console (F12).');
       }
     });
   }
@@ -132,9 +134,10 @@ export class ProfileComponent implements OnInit {
         if (user?.id) this.loadOrders(user.id.toString());
         this.closeDetail();
         this.cancelInvoiceId.set(null); // Close popup
+        this.toastService.success('Đã hủy đơn hàng thành công.');
       },
       error: (err) => {
-        alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+        this.toastService.error('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
         this.cancelInvoiceId.set(null); // Close popup
       }
     });
@@ -154,9 +157,9 @@ export class ProfileComponent implements OnInit {
       }).subscribe({
         next: () => {
           this.userProfile.set(updatedProfile);
-          alert('Cập nhật thông tin thành công!');
+          this.toastService.success('Cập nhật thông tin thành công!');
         },
-        error: (err) => alert('Lỗi khi cập nhật thông tin.')
+        error: (err) => this.toastService.error('Lỗi khi cập nhật thông tin.')
       });
     }
   }

@@ -1,14 +1,8 @@
-import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DropdownService } from '../services/dropdown.service';
-
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-shopping-cart-dropdown',
@@ -18,15 +12,23 @@ interface CartItem {
   styleUrl: './shopping-cart-dropdown.component.scss'
 })
 export class ShoppingCartDropdownComponent implements OnInit {
-  @Output() cartItemClicked = new EventEmitter<CartItem>();
   @Output() viewCart = new EventEmitter<void>();
 
-  constructor(private elementRef: ElementRef<HTMLElement>, private dropdownService: DropdownService) {}
+  private cartService = inject(CartService);
+  private dropdownService = inject(DropdownService);
+  private elementRef = inject(ElementRef<HTMLElement>);
+  private router = inject(Router);
+
+  cartItems = this.cartService.cartItems;
+  totalItems = this.cartService.totalItems;
+  totalPrice = this.cartService.totalPrice;
+
+  isOpen = false;
 
   ngOnInit() {
     this.dropdownService.dropdownOpen$.subscribe((openedDropdownId: string | null) => {
       if (openedDropdownId !== 'shopping-cart' && this.isOpen) {
-        this.closeDropdown();
+        this.isOpen = false;
       }
     });
   }
@@ -34,39 +36,24 @@ export class ShoppingCartDropdownComponent implements OnInit {
   @HostListener('document:click', ['$event.target'])
   onDocumentClick(target: EventTarget | null) {
     if (target && target instanceof Node && !this.elementRef.nativeElement.contains(target)) {
-      this.closeDropdown();
+      this.isOpen = false;
     }
   }
 
-  isOpen = false;
-
-  cartItems: CartItem[] = [
-
-  ];
-  get totalItems(): number {
-    return this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  }
-  get totalPrice(): number {
-    return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  }
   toggleDropdown() {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       this.dropdownService.openDropdown('shopping-cart');
     }
   }
-  onCartItemClick(item: CartItem) {
-    this.cartItemClicked.emit(item);
-    this.closeDropdown();
+
+  onRemoveItem(productId: string) {
+    this.cartService.removeFromCart(productId);
   }
+
   onViewCart() {
     this.viewCart.emit();
-    this.closeDropdown();
-  }
-  onRemoveItem(item: CartItem) {
-    this.cartItems = this.cartItems.filter(cartItem => cartItem.id !== item.id);
-  }
-  closeDropdown() {
     this.isOpen = false;
+    this.router.navigate(['/cart']);
   }
 }

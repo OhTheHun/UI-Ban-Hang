@@ -1,0 +1,119 @@
+<div class="product-detail-container" *ngIf="product() as p">
+  
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumb">
+    <span>Trang chủ</span> / 
+    <span>{{ p.donViTinh?.ten || 'Sản phẩm' }}</span> / 
+    <span class="active">{{ p.productName }}</span>
+  </nav>
+
+  <div class="main-content">
+    
+    <!-- Gallery -->
+    <div class="gallery-section">
+      <div class="thumbnails">
+        <div 
+          *ngFor="let img of p.images" 
+          class="thumb" 
+          [class.active]="selectedImage() === img"
+          (click)="selectedImage.set(img)"
+        >
+          <img [src]="img" alt="thumbnail">
+        </div>
+      </div>
+      
+      <div class="main-image-box">
+        <img [src]="selectedImage()" [alt]="p.productName">
+        <div class="zoom-hint">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+      <div class="product-header">
+        <h1>{{ p.productName }}</h1>
+        <div class="sku-info">
+          <span>Mã: <span class="id">{{ p.id?.substring(0,8) }}</span></span>
+          <span>Đã bán: 1.2k</span>
+        </div>
+      </div>
+
+      <div class="price-section">
+        <div class="price-row">
+          <span class="current">{{ (p.discountPrice || p.price) | number:'1.0-0' }} đ</span>
+          <span class="unit">/ {{ p.donViTinh?.ten || 'Cái' }}</span>
+          <span class="original" *ngIf="p.discountPrice && p.discountPrice < p.price">
+            {{ p.price | number:'1.0-0' }} đ
+          </span>
+          <span class="discount-tag" *ngIf="p.discountPrice && p.discountPrice < p.price">
+            -{{ (1 - p.discountPrice/p.price) * 100 | number:'1.0-0' }}%
+          </span>
+        </div>
+      </div>
+
+      <div class="shipping-banner">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+        <span>Sản phẩm sẵn hàng, sẽ liên hệ trước khi giao nếu tồn kho có thay đổi</span>
+      </div>
+
+      <div class="purchase-area">
+        
+        <!-- Case 1: Product NOT in cart -->
+        <ng-container *ngIf="!isInCart()">
+          <div class="qty-selector">
+            <label>Số lượng:</label>
+            <div class="qty-box">
+              <button (click)="updateLocalQty(-1)">-</button>
+              <div class="val">{{ localQuantity() }}</div>
+              <button (click)="updateLocalQty(1)">+</button>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="btn-secondary" (click)="onAddToCart()">THÊM VÀO GIỎ HÀNG</button>
+            <button class="btn-primary" (click)="onBuyNow()">MUA NGAY</button>
+          </div>
+        </ng-container>
+
+        <!-- Case 2: Product ALREADY in cart -->
+        <ng-container *ngIf="isInCart()">
+          <div class="qty-selector in-cart">
+            <label>Sản phẩm đã trong giỏ hàng:</label>
+            <div class="qty-box">
+              <button (click)="updateCartQty(-1)">-</button>
+              <div class="val">{{ cartQuantity() }}</div>
+              <button (click)="updateCartQty(1)">+</button>
+            </div>
+          </div>
+          <button class="btn-primary" (click)="onBuyNow()">ĐẾN GIỎ HÀNG</button>
+        </ng-container>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tabs -->
+  <div class="details-tabs">
+    <div class="tab-headers">
+      <div class="tab active">MÔ TẢ SẢN PHẨM</div>
+      <div class="tab">THÔNG TIN THÊM</div>
+    </div>
+    <div class="tab-content">
+      <p>{{ p.description || 'Chưa có mô tả cho sản phẩm này.' }}</p>
+      <br>
+      <table>
+        <tr>
+          <td>Đơn vị tính</td>
+          <td>{{ p.donViTinh?.ten }}</td>
+        </tr>
+        <tr>
+          <td>Trạng thái</td>
+          <td>{{ p.status === 1 ? 'Còn hàng' : 'Hết hàng' }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div>

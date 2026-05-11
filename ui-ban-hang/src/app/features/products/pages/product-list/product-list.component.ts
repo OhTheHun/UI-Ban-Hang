@@ -4,12 +4,14 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { Observable, of } from 'rxjs';
-import { switchMap, map, catchError, startWith, shareReplay } from 'rxjs/operators';
+import { switchMap, map, catchError, startWith, shareReplay, combineLatestWith } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent],
+  imports: [CommonModule, ProductCardComponent, PaginationComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -19,9 +21,13 @@ export class ProductListComponent implements OnInit {
   vm$!: Observable<{
     loading: boolean;
     products: any[];
+    totalItems: number;
+    currentPage: number;
   }>;
 
   searchTitle = 'Tất cả sản phẩm';
+  currentPage$ = new BehaviorSubject<number>(1);
+  pageSize = 24;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,6 +39,7 @@ export class ProductListComponent implements OnInit {
       switchMap(params => {
         const categoryId = params['category'];
         const keyword = params['keyword'];
+        this.currentPage$.next(1); // Reset trang về 1 khi tìm kiếm mới hoặc đổi category
 
         const api$ = categoryId
           ? this.productService.getProductsByCategory(categoryId)
@@ -43,12 +50,21 @@ export class ProductListComponent implements OnInit {
           : keyword ? `Kết quả tìm kiếm cho "${keyword}"` : 'Tất cả sản phẩm';
 
         return api$.pipe(
-          map(data => ({
-            loading: false,
-            products: (data || []).map(p => this.transformProduct(p))
-          })),
-          catchError(() => of({ loading: false, products: [] })),
-          startWith({ loading: true, products: [] })
+          map(data => (data || []).map(p => this.transformProduct(p))),
+          combineLatestWith(this.currentPage$),
+          map(([allProducts, currentPage]) => {
+            const startIndex = (currentPage - 1) * this.pageSize;
+            const paginatedProducts = allProducts.slice(startIndex, startIndex + this.pageSize);
+
+            return {
+              loading: false,
+              products: paginatedProducts,
+              totalItems: allProducts.length,
+              currentPage: currentPage
+            };
+          }),
+          catchError(() => of({ loading: false, products: [], totalItems: 0, currentPage: 1 })),
+          startWith({ loading: true, products: [], totalItems: 0, currentPage: 1 })
         );
       }),
       shareReplay(1) // cache tránh gọi lại
@@ -64,6 +80,11 @@ export class ProductListComponent implements OnInit {
       currentPrice: p.discountPrice > 0 ? p.discountPrice : p.price,
       hasDiscount: p.discountPrice > 0 && p.discountPrice < p.price
     };
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage$.next(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   trackByProductId(index: number, product: any): string {

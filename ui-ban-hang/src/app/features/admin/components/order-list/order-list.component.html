@@ -1,0 +1,113 @@
+<div class="main-content card" (click)="hostClick()">
+  <div class="card-header">
+    <div class="header-left"></div>
+    <div class="header-right">
+      <div class="column-selector-container">
+        <button class="btn-secondary" (click)="toggleColumnSelector($event)">
+          <i class="ph ph-rows"></i> Tùy chỉnh cột <i class="ph ph-caret-down"></i>
+        </button>
+        
+        @if (showColumnSelector) {
+          <div class="column-dropdown">
+            <div class="dropdown-header">Hiển thị cột</div>
+            @for (col of columnConfig; track col.key) {
+              <label class="column-item" (click)="$event.stopPropagation()">
+                <input type="checkbox" [checked]="col.visible" (change)="toggleColumn(col.key)">
+                <span>{{ col.label }}</span>
+              </label>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th *ngIf="isColumnVisible('invoiceId')">Invoice ID</th>
+          <th *ngIf="isColumnVisible('code')">Order Code</th>
+          <th *ngIf="isColumnVisible('user')">User</th>
+          <th *ngIf="isColumnVisible('contact')">Contact</th>
+          <th *ngIf="isColumnVisible('address')">Address</th>
+          <th *ngIf="isColumnVisible('amount')">Amount</th>
+          <th *ngIf="isColumnVisible('method')">Method</th>
+          <th *ngIf="isColumnVisible('status')">Status</th>
+          <th *ngIf="isColumnVisible('date')">Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+          @for (i of [1,2,3,4,5,6]; track i) {
+            <tr class="skeleton-row">
+              <td *ngIf="isColumnVisible('invoiceId')"><div class="skeleton-bar short"></div></td>
+              <td *ngIf="isColumnVisible('code')"><div class="skeleton-bar medium"></div></td>
+              <td *ngIf="isColumnVisible('user')"><div class="skeleton-user"><div class="skeleton-bar name"></div><div class="skeleton-bar email"></div></div></td>
+              <td *ngIf="isColumnVisible('contact')"><div class="skeleton-bar short"></div></td>
+              <td *ngIf="isColumnVisible('address')"><div class="skeleton-bar address"></div></td>
+              <td *ngIf="isColumnVisible('amount')"><div class="skeleton-bar price"></div></td>
+              <td *ngIf="isColumnVisible('method')"><div class="skeleton-bar badge"></div></td>
+              <td *ngIf="isColumnVisible('status')"><div class="skeleton-bar badge"></div></td>
+              <td *ngIf="isColumnVisible('date')"><div class="skeleton-bar date"></div></td>
+              <td><div class="skeleton-bar icon"></div></td>
+            </tr>
+          }
+        } @else {
+          @for (order of orders; track order.invoiceId) {
+            <tr class="fade-in-row">
+              <td class="id-cell" *ngIf="isColumnVisible('invoiceId')">{{ order.invoiceId }}</td>
+              <td class="code-cell" *ngIf="isColumnVisible('code')">{{ order.code }}</td>
+              <td *ngIf="isColumnVisible('user')">
+                <div class="user-info">
+                  <span class="name">{{ order.fullName || 'No Name' }}</span>
+                  <span class="email">{{ order.userEmail }}</span>
+                </div>
+              </td>
+              <td class="contact-cell" *ngIf="isColumnVisible('contact')"><div class="phone">{{ order.phone }}</div></td>
+              <td class="address-cell" *ngIf="isColumnVisible('address')"><span class="address-text" [title]="order.address">{{ order.address }}</span></td>
+              <td class="amount-cell" *ngIf="isColumnVisible('amount')">{{ order.totalAmount | number }} đ</td>
+              <td *ngIf="isColumnVisible('method')"><span class="payment-badge">{{ order.paymentMethod | uppercase }}</span></td>
+              <td *ngIf="isColumnVisible('status')"><span class="status-badge" [attr.data-status]="order.status?.toLowerCase()">{{ order.status }}</span></td>
+              <td class="date-cell" *ngIf="isColumnVisible('date')">{{ order.createdTime | date:'dd/MM/yyyy' }}<br><small>{{ order.createdTime | date:'HH:mm' }}</small></td>
+              <td class="actions-cell">
+                <button class="btn-actions" (click)="toggleDropdown($event, order.invoiceId)">
+                  <i class="ph ph-dots-three-outline"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-footer" *ngIf="!loading && totalItems > 0">
+    <div class="info">Hiển thị {{ startItem }}-{{ endItem }} trong tổng {{ totalItems }} mục</div>
+    <div class="pagination">
+      <button class="btn-page" (click)="onPageChange.emit(1)" [disabled]="currentPage === 1"><i class="ph ph-double-left"></i></button>
+      <button class="btn-page" (click)="onPageChange.emit(currentPage - 1)" [disabled]="currentPage === 1"><i class="ph ph-caret-left"></i></button>
+      <button class="btn-page active">{{ currentPage }}</button>
+      <button class="btn-page" (click)="onPageChange.emit(currentPage + 1)" [disabled]="currentPage === totalPages"><i class="ph ph-caret-right"></i></button>
+      <button class="btn-page" (click)="onPageChange.emit(totalPages)" [disabled]="currentPage === totalPages"><i class="ph ph-double-right"></i></button>
+    </div>
+    <div class="page-size">
+      <select [value]="pageSize"><option [value]="6">6 / trang</option><option [value]="10">10 / trang</option></select>
+    </div>
+  </div>
+
+  <!-- Global Action Dropdown - Positioned Absolutely relative to document -->
+  @if (activeDropdownId) {
+    <div class="global-dropdown-menu" [style.top]="dropdownPosition.top" [style.left]="dropdownPosition.left" (click)="$event.stopPropagation()">
+      <button class="dropdown-item" (click)="viewDetail(activeDropdownId)">
+        <i class="ph ph-eye"></i>
+        <span>Chi tiết</span>
+      </button>
+      <button class="dropdown-item" (click)="copyInvoiceId(activeDropdownId)">
+        <i class="ph ph-copy"></i>
+        <span>Copy ID</span>
+      </button>
+    </div>
+  }
+</div>

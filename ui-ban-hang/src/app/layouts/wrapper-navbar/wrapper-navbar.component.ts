@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SubNavbarComponent } from '../sub-navbar/sub-navbar.component';
 import { AddAddressComponent } from '../../shared/add-address/add-address.component';
 import { AccountDropdownComponent } from '../../shared/account-dropdown/account-dropdown.component';
 import { ShoppingCartDropdownComponent } from '../../shared/shopping-cart-dropdown/shopping-cart-dropdown.component';
+import { AuthService } from '../../features/auth/services/auth.service';
 
 @Component({
   selector: 'header-navbar',
@@ -16,9 +17,21 @@ import { ShoppingCartDropdownComponent } from '../../shared/shopping-cart-dropdo
 export class NavbarComponent {
   isAddressModalOpen = false;
   isMenuOpen = false;
-  currentAddress = 'Khu B, Khu đô thị An Phú An Khánh';
   
   private router = inject(Router);
+  private authService = inject(AuthService);
+
+  currentUser = this.authService.currentUser;
+  currentAddress = 'Khu B, Khu đô thị An Phú An Khánh';
+
+  constructor() {
+    effect(() => {
+      const user = this.currentUser();
+      if (user && user.address) {
+        this.currentAddress = user.address;
+      }
+    });
+  }
 
   onSearch(keyword: string) {
     if (keyword && keyword.trim()) {
@@ -44,24 +57,23 @@ export class NavbarComponent {
   }
 
   onAddressSubmit(data: { province: string; district: string; ward: string; address: string }) {
-    // Cập nhật địa chỉ hiện tại dựa trên dữ liệu từ modal
     this.currentAddress = `${data.address}, ${data.ward}, ${data.district}, ${data.province}`;
     this.closeAddressModal();
   }
 
   onLogin() {
-    console.log('Navigate to login page');
+    this.router.navigate(['/login']);
   }
 
   onSignup() {
-    console.log('Navigate to signup page');
+    this.router.navigate(['/register']);
   }
 
   onLogout() {
-    console.log('Logout user');
+    this.authService.logout();
   }
 
   onProfile() {
-    console.log('Navigate to profile page');
+    this.router.navigate(['/profile']);
   }
 }

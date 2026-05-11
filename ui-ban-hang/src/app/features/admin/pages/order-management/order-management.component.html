@@ -1,0 +1,30 @@
+<div class="page-layout">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2 class="title">Quản lý Đơn hàng</h2>
+      <p class="subtitle">Theo dõi, cập nhật và xử lý đơn hàng.</p>
+    </div>
+    <div class="header-filters">
+      <div class="tabs">
+        <button (click)="filterByStatus(-1)" [class.active]="currentStatus === -1">Tất cả</button>
+        <button (click)="filterByStatus(0)" [class.active]="currentStatus === 0">Chờ duyệt</button>
+        <button (click)="filterByStatus(1)" [class.active]="currentStatus === 1">Đang xử lý</button>
+        <button (click)="filterByStatus(2)" [class.active]="currentStatus === 2">Đang giao</button>
+        <button (click)="filterByStatus(3)" [class.active]="currentStatus === 3">Hoàn thành</button>
+        <button (click)="filterByStatus(4)" [class.active]="currentStatus === 4">Đã hủy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout-grid full-width">
+    <!-- Order List Component -->
+    <app-order-list 
+      [orders]="orders" 
+      [loading]="loading"
+      [currentPage]="currentPage"
+      [totalItems]="allOrders.length"
+      [pageSize]="pageSize"
+      (onPageChange)="onPageChanged($event)">
+    </app-order-list>
+  </div>
+</div>

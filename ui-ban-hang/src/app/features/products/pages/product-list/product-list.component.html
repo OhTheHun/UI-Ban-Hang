@@ -24,9 +24,16 @@
         </app-product-card>
       </div>
 
+      <!-- PAGINATION -->
+      <div class="pagination-wrapper" *ngIf="!vm.loading && vm.totalItems > pageSize">
+        <app-pagination [totalItems]="vm.totalItems" [pageSize]="pageSize" [currentPage]="vm.currentPage"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+
       <!-- COUNT -->
       <div class="results-count" *ngIf="!vm.loading">
-        Tìm thấy {{ vm.products.length }} sản phẩm
+        Hiển thị {{ vm.products.length }} / {{ vm.totalItems }} sản phẩm
       </div>
 
     </ng-container>

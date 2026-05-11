@@ -1,5 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { CartService } from '../../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-card',
@@ -13,14 +15,25 @@ export class ProductCardComponent {
 
   @Input() product!: any;
 
+  constructor(
+    private router: Router,
+    private cartService: CartService
+  ) {}
+
   fallbackImage = 'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png';
+
+  goToDetail() {
+    if (this.product?.id) {
+      this.router.navigate(['/products', this.product.id]);
+    }
+  }
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = this.fallbackImage;
   }
 
   addToCart() {
-    console.log('Add to cart', this.product);
+    this.cartService.addToCart(this.product);
   }
 
   toggleFavorite() {

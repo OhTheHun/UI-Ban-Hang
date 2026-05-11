@@ -26,7 +26,7 @@ export class CategoriesDropdownComponent implements OnInit {
   isOpen = false;
   categories: Category[] = [];
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService) { }
 
   ngOnInit() {
     this.productService.getCategories().subscribe({

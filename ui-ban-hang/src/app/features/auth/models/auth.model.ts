@@ -8,6 +8,8 @@ export interface AuthResponse {
   expireIn: number;
   userId: string;
   role: string;
+  fullName: string;
+  email: string;
 }
 
 export interface RegisterRequest {
@@ -25,7 +27,9 @@ export interface RegisterResponse {
 export interface User {
   id: string;
   email: string;
-  name: string;
+  fullname: string;
   avatar: string;
   role: string;
+  phone?: string;
+  address?: string;
 }

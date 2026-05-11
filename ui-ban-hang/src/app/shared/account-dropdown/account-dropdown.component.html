@@ -17,10 +17,10 @@
     <!-- Logged In State -->
     <div class="dropdown-content" *ngIf="isLoggedIn; else guestContent">
       <div class="user-header">
-        <img [src]="currentUser?.avatar" [alt]="currentUser?.name" class="user-avatar"
+        <img [src]="currentUser?.avatar" [alt]="currentUser?.full " class="user-avatar"
           onerror="this.onerror=null;this.src='/logo/account.webp'">
         <div class="user-info">
-          <h4 class="user-name">{{ currentUser?.name }}</h4>
+          <h4 class="user-name">{{ currentUser?.fullname}}</h4>
           <p class="user-email">{{ currentUser?.email }}</p>
         </div>
       </div>

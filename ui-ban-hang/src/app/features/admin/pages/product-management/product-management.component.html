@@ -1,0 +1,395 @@
+<div class="page-layout" (click)="hostClick()">
+  <div class="page-header">
+    <div class="header-titles">
+      <h2 class="title">Quản lý Sản phẩm</h2>
+      <p class="subtitle">Xem, thêm, sửa, xóa và quản lý danh mục sản phẩm của bạn.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" *ngIf="isAdmin()">
+        <i class="ph ph-tree-structure"></i> Quản lý Danh mục
+      </button>
+      <button class="btn-primary" (click)="openAddModal()" *ngIf="isAdmin()">
+        <i class="ph ph-plus"></i> Thêm sản phẩm mới
+      </button>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-box">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Tìm kiếm theo tên hoặc SKU...">
+        </div>
+        <div class="filter-dropdown">
+          <i class="ph ph-funnel"></i>
+          <select [(ngModel)]="categoryFilter" (change)="onSearch()">
+            <option value="all">Tất cả danh mục</option>
+            @for (cat of categories(); track cat.id) {
+              <option [value]="cat.id">{{ cat.tenDanhMuc }}</option>
+            }
+          </select>
+        </div>
+        <div class="filter-dropdown">
+          <select [(ngModel)]="statusFilter" (change)="onSearch()">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="0">Bản nháp</option>
+            <option value="1">Hết hàng</option>
+            <option value="2">Đang bán</option>
+            <option value="3">Ngừng bán</option>
+          </select>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <div class="sort-dropdown">
+          <select [(ngModel)]="sortBy">
+            <option value="name">Sắp xếp: Tên A-Z</option>
+            <option value="price_asc">Giá: Thấp đến Cao</option>
+            <option value="price_desc">Giá: Cao đến Thấp</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container" [class.loading]="isLoading()">
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <div class="spinner"></div>
+          <p>Đang tải dữ liệu...</p>
+        </div>
+      }
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col"><input type="checkbox"></th>
+            <th>SẢN PHẨM</th>
+            <th>MÃ SKU</th>
+            <th>DANH MỤC</th>
+            <th>GIÁ BÁN</th>
+            <th>KHO</th>
+            <th>TRẠNG THÁI</th>
+            <th>THAO TÁC</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of filteredProducts(); track product.id) {
+            <tr>
+              <td class="checkbox-col"><input type="checkbox"></td>
+              <td>
+                <div class="product-cell">
+                  <div class="img-box">
+                    <img [src]="product.imageUrl" [alt]="product.productName" *ngIf="product.imageUrl">
+                    <i class="ph ph-package" *ngIf="!product.imageUrl"></i>
+                  </div>
+                  <div class="info">
+                    <div class="name">{{ product.productName }}</div>
+                    <div class="supplier">{{ product.supplierName }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="sku">{{ product.sku }}</td>
+              <td>{{ getCategoryName(product.categoryId) }}</td>
+              <td class="price">
+                <div class="main">{{ product.price | number:'1.0-0' }} đ</div>
+                <div class="cost" *ngIf="product.cost">Vốn: {{ product.cost | number:'1.0-0' }} đ</div>
+              </td>
+              <td class="stock" [class.low]="product.stockQuantity < 10">{{ product.stockQuantity }} {{ product.unitName }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(product.status)">
+                  {{ getStatusLabel(product.status) }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button class="btn-actions" (click)="toggleDropdown($event, product.id)">
+                  <i class="ph ph-dots-three-outline"></i>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="empty-state">
+                <i class="ph ph-mask-sad"></i>
+                <p>Không tìm thấy sản phẩm nào</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-footer">
+      <div class="info">Hiển thị <strong>{{ filteredProducts().length }}</strong> kết quả</div>
+      <div class="pagination">
+        <button disabled><i class="ph ph-caret-left"></i></button>
+        <button class="active">1</button>
+        <button disabled><i class="ph ph-caret-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Global Action Dropdown -->
+@if (activeDropdownId && activeProduct) {
+  <div class="global-dropdown-menu" [style.top]="dropdownPosition.top" [style.left]="dropdownPosition.left" (click)="$event.stopPropagation()">
+    <button class="dropdown-item" (click)="viewProduct(activeProduct)">
+      <i class="ph ph-eye"></i>
+      <span>Chi tiết</span>
+    </button>
+    <button class="dropdown-item" (click)="openEditModal(activeProduct)" *ngIf="isAdmin()">
+      <i class="ph ph-pencil-simple"></i>
+      <span>Chỉnh sửa</span>
+    </button>
+    <div class="dropdown-divider" *ngIf="isAdmin()"></div>
+    <button class="dropdown-item text-red" (click)="deleteProduct(activeProduct)" *ngIf="isAdmin()">
+      <i class="ph ph-trash"></i>
+      <span>Xóa sản phẩm</span>
+    </button>
+  </div>
+}
+
+<!-- Add Product Modal -->
+<div class="modal-overlay" *ngIf="showAddModal()" (click)="closeAddModal()">
+  <div class="modal-content add-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3><i class="ph" [ngClass]="isEditMode() ? 'ph-pencil-circle' : 'ph-plus-circle'"></i> {{ isEditMode() ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới' }}</h3>
+      <button class="btn-close" (click)="closeAddModal()"><i class="ph ph-x"></i></button>
+    </div>
+    <form [formGroup]="addProductForm" (ngSubmit)="submitAddProduct()" class="modal-body">
+      <div class="form-sections">
+        <!-- Section 1: Basic Info -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="ph ph-info"></i>
+            <span>Thông tin cơ bản</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Tên sản phẩm *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-tag"></i>
+                <input type="text" formControlName="productName" placeholder="Nhập tên sản phẩm...">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Mã SKU *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-barcode"></i>
+                <input type="text" formControlName="sku" placeholder="VD: PRO-001">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Đơn vị tính *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-scales"></i>
+                <select formControlName="donViTinhId">
+                  <option value="">Chọn đơn vị</option>
+                  @for (u of units(); track u.id) {
+                    <option [value]="u.id">{{ u.tenDonViTinh }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Classification -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="ph ph-folders"></i>
+            <span>Phân loại & Cung cấp</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Danh mục *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-list-bullets"></i>
+                <select formControlName="categoryId">
+                  <option value="">Chọn danh mục</option>
+                  @for (cat of categories(); track cat.id) {
+                    <option [value]="cat.id">{{ cat.tenDanhMuc }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Nhà cung cấp *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-truck"></i>
+                <select formControlName="supplierId">
+                  <option value="">Chọn NCC</option>
+                  @for (sup of suppliers(); track sup.id) {
+                    <option [value]="sup.id">{{ sup.supplierName }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Pricing & Inventory -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="ph ph-currency-circle-dollar"></i>
+            <span>Giá & Kho hàng</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Giá bán (đ) *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-money"></i>
+                <input type="number" formControlName="price">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Giá khuyến mãi (đ)</label>
+              <div class="input-with-icon">
+                <i class="ph ph-receipt"></i>
+                <input type="number" formControlName="discountPrice">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Giá vốn (đ) *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-hand-coins"></i>
+                <input type="number" formControlName="cost">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Trạng thái *</label>
+              <div class="input-with-icon">
+                <i class="ph ph-activity"></i>
+                <select formControlName="status">
+                  <option value="0">Bản nháp</option>
+                  <option value="2">Đang bán</option>
+                  <option value="3">Ngừng bán</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Media & Description -->
+        <div class="form-section">
+          <div class="section-header">
+            <i class="ph ph-image"></i>
+            <span>Hình ảnh & Mô tả</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>URL Hình ảnh</label>
+              <div class="input-with-icon">
+                <i class="ph ph-link"></i>
+                <input type="text" formControlName="imageUrl" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="form-group full">
+              <label>Mô tả sản phẩm</label>
+              <textarea formControlName="description" rows="3" placeholder="Nhập mô tả chi tiết..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" (click)="closeAddModal()">Hủy</button>
+        <button type="submit" class="btn-primary" [disabled]="addProductForm.invalid">
+          <i class="ph ph-check-circle"></i>
+          Lưu sản phẩm
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal-overlay" *ngIf="selectedProduct() && !showAddModal()" (click)="closeProduct()">
+  <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Chi tiết sản phẩm</h3>
+      <button class="btn-close" (click)="closeProduct()"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="modal-body" *ngIf="selectedProduct() as product">
+      <div class="detail-grid">
+        <div class="detail-img">
+          <img [src]="product.imageUrl" [alt]="product.productName" *ngIf="product.imageUrl">
+          <div class="no-img" *ngIf="!product.imageUrl">
+            <i class="ph ph-package"></i>
+            <span>Không có ảnh</span>
+          </div>
+        </div>
+        <div class="detail-info">
+          <div class="badge-row">
+            <span class="status-badge" [ngClass]="getStatusClass(product.status)">{{ getStatusLabel(product.status) }}</span>
+            <span class="sku">#{{ product.sku }}</span>
+          </div>
+          <h4>{{ product.productName }}</h4>
+          
+          <div class="stats-row">
+            <div class="stat-card">
+              <label>Giá bán</label>
+              <div class="val">{{ product.price | number }} đ</div>
+            </div>
+            <div class="stat-card">
+              <label>Tồn kho</label>
+              <div class="val">{{ product.stockQuantity }} {{ product.unitName }}</div>
+            </div>
+          </div>
+
+          <div class="info-list">
+            <div class="item">
+              <span class="lbl">Danh mục:</span>
+              <span class="val">{{ getCategoryName(product.categoryId) }}</span>
+            </div>
+            <div class="item">
+              <span class="lbl">Nhà cung cấp:</span>
+              <span class="val">{{ product.supplierName }}</span>
+            </div>
+            <div class="item">
+              <span class="lbl">Giá vốn:</span>
+              <span class="val">{{ product.cost | number }} đ</span>
+            </div>
+          </div>
+
+          <div class="description-box">
+            <label>Mô tả:</label>
+            <p>{{ product.description || 'Chưa có mô tả cho sản phẩm này.' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" (click)="closeProduct()">Đóng</button>
+      <button class="btn-primary" (click)="openEditModal(selectedProduct()!)" *ngIf="isAdmin()"><i class="ph ph-pencil"></i> Chỉnh sửa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm()" (click)="closeDeleteConfirm()">
+  <div class="modal-content confirm-modal" (click)="$event.stopPropagation()">
+    <div class="confirm-icon">
+      <div class="icon-wrapper">
+        <i class="ph ph-warning-octagon"></i>
+      </div>
+    </div>
+    <div class="confirm-body">
+      <h3>Xác nhận xóa sản phẩm?</h3>
+      <p>Bạn có chắc chắn muốn xóa sản phẩm <strong>"{{ productToDelete()?.productName }}"</strong>? Hành động này không thể hoàn tác.</p>
+    </div>
+    <div class="confirm-footer">
+      <button class="btn-outline" (click)="closeDeleteConfirm()">Hủy bỏ</button>
+      <button class="btn-danger" (click)="confirmDelete()">
+        <i class="ph ph-trash"></i>
+        Xác nhận xóa
+      </button>
+    </div>
+  </div>
+</div>

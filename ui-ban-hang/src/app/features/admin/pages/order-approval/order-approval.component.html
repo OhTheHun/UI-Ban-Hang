@@ -1,0 +1,166 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-info">
+      <h2 class="title">Phê duyệt Đơn hàng</h2>
+      <p class="subtitle">Xử lý các đơn hàng đang chờ duyệt. (Dành cho Seller & Admin)</p>
+    </div>
+  </div>
+
+  <div class="split-view">
+    <!-- Left List -->
+    <div class="list-pane card">
+      <div class="pane-header">
+        <div class="pane-tabs">
+          <button (click)="activeTab = 'pending'" [class.active]="activeTab === 'pending'">
+            Chờ duyệt ({{ pendingOrders.length }})
+          </button>
+          <button (click)="activeTab = 'processing'" [class.active]="activeTab === 'processing'">
+            Đang xử lý ({{ processingOrders.length }})
+          </button>
+          <button (click)="activeTab = 'delivering'" [class.active]="activeTab === 'delivering'">
+            Đang giao ({{ deliveringOrders.length }})
+          </button>
+          <button (click)="activeTab = 'history'" [class.active]="activeTab === 'history'">
+            Lịch sử duyệt ({{ historyOrders.length }})
+          </button>
+        </div>
+        <button class="btn-icon refresh-btn" (click)="fetchOrders()" [class.spinning]="isLoading()">
+          <i class="ph ph-arrows-clockwise"></i>
+        </button>
+      </div>
+
+      <div class="order-cards">
+        @if (isLoading()) {
+        <div class="loading-overlay">
+          <div class="spinner"></div>
+          <p>Đang tải đơn hàng...</p>
+        </div>
+        } @else {
+        @for (order of getDisplayOrders(); track order.id) {
+        <div class="order-item" (click)="selectOrder(order)" [class.selected]="selectedOrder()?.id === order.id">
+          <div class="order-top">
+            <span class="code">#{{ order.code }}</span>
+            <span class="status-dot" [ngClass]="'status-' + order.status"></span>
+          </div>
+          <p class="customer">{{ order.fullName }}</p>
+          <div class="order-bottom">
+            <span class="date">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span class="amount">{{ order.totalAmount | number }} ₫</span>
+          </div>
+        </div>
+        } @empty {
+        <div class="empty-list">
+          <i class="ph ph-tray"></i>
+          <p>Trống</p>
+        </div>
+        }
+        }
+      </div>
+    </div>
+
+
+    <!-- Right Detail -->
+    <div class="detail-pane">
+      <div class="card detail-card" [class.loading]="isDetailLoading()">
+        @if (isDetailLoading()) {
+        <div class="detail-loading">
+          <div class="spinner"></div>
+          <p>Đang tải chi tiết...</p>
+        </div>
+        }
+
+        <div class="detail-header">
+          <div class="info">
+            <h3>Đơn hàng {{ selectedOrder()?.code }}</h3>
+            <p>Tạo lúc: {{ selectedOrder()?.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <div class="total-badge">
+            <label>Giá trị đơn</label>
+            <div class="val">{{ selectedOrder()?.totalAmount | number }} ₫</div>
+          </div>
+        </div>
+
+        <div class="detail-body">
+          <div class="info-sections">
+            <section>
+              <h4>Thông tin người nhận</h4>
+              <div class="data-box">
+                <p><strong>Người nhận:</strong> {{ selectedOrder()?.fullName }}</p>
+                <p *ngIf="selectedOrder()?.phone"><strong>Điện thoại:</strong> {{ selectedOrder()?.phone }}</p>
+                <p *ngIf="selectedOrder()?.address"><strong>Địa chỉ:</strong> {{ selectedOrder()?.address }}</p>
+                <div class="no-data" *ngIf="!selectedOrder()?.phone && !isDetailLoading()">
+                  <i class="ph ph-info"></i> Thông tin liên hệ chưa cập nhật
+                </div>
+              </div>
+            </section>
+
+            <section *ngIf="selectedOrder()?.items?.length">
+              <h4>Sản phẩm</h4>
+              <div class="table-container">
+                <table class="item-table">
+                  <thead>
+                    <tr>
+                      <th>Tên SP</th>
+                      <th>Số lượng</th>
+                      <th>Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of selectedOrder()?.items; track item.productName) {
+                    <tr>
+                      <td>{{ item.productName }}</td>
+                      <td>x{{ item.quantity }}</td>
+                      <td>{{ item.price * item.quantity | number }} ₫</td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </section>
+            <div class="no-items" *ngIf="!selectedOrder()?.items?.length && !isDetailLoading()">
+              <i class="ph ph-shopping-cart"></i> Không tìm thấy thông tin sản phẩm
+            </div>
+          </div>
+
+
+          @if ([0, 1, 2].includes(selectedOrder()?.status!) && !showRejectInput()) {
+          <div class="detail-footer" [class.disabled]="isUpdating">
+            <button *ngIf="selectedOrder()?.status === 0" (click)="showRejectInput.set(true)"
+              class="btn-outline-danger" [disabled]="isUpdating">Từ chối</button>
+
+            <button *ngIf="selectedOrder()?.status === 0" (click)="updateStatus(1)" class="btn-primary"
+              [disabled]="isUpdating">
+              <i class="ph ph-package" *ngIf="!isUpdating"></i>
+              <span class="spinner-small" *ngIf="isUpdating"></span>
+              Xác nhận & Xử lý
+            </button>
+
+            <button *ngIf="selectedOrder()?.status === 1" (click)="updateStatus(2)" class="btn-primary"
+              [disabled]="isUpdating">
+              <i class="ph ph-truck" *ngIf="!isUpdating"></i>
+              <span class="spinner-small" *ngIf="isUpdating"></span>
+              Giao hàng
+            </button>
+
+            <button *ngIf="selectedOrder()?.status === 2" (click)="updateStatus(3)" class="btn-success"
+              [disabled]="isUpdating">
+              <i class="ph ph-flag-checkered" *ngIf="!isUpdating"></i>
+              <span class="spinner-small" *ngIf="isUpdating"></span>
+              Hoàn thành
+            </button>
+          </div>
+          }
+
+          <div class="processed-status" [class.in-progress]="[0, 1, 2].includes(selectedOrder()?.status!)">
+            <div class="status-info">
+              <span class="label">Trạng thái hiện tại:</span>
+              <div class="badge" [ngClass]="'status-' + selectedOrder()?.status">
+                {{ getStatusText(selectedOrder()?.status!) }}
+              </div>
+            </div>
+            <p class="time" *ngIf="selectedOrder()?.processedAt">Cập nhật lúc: {{ selectedOrder()?.processedAt |
+              date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+        </div>
+
+      </div>

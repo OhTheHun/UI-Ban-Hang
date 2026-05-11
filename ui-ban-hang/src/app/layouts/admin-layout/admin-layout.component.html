@@ -1,0 +1,43 @@
+<div class="admin-container">
+  <!-- Sidebar -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- Main Content -->
+  <div class="admin-main">
+    <!-- Top Header -->
+    <header class="admin-header">
+      <div class="header-left">
+        <h1 class="page-title">Quản trị Bán hàng</h1>
+      </div>
+      
+      <div class="header-center">
+        <div class="search-box">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" placeholder="Tìm kiếm (Ctrl+K)">
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="header-actions">
+          <button class="action-btn">
+            <i class="ph ph-bell"></i>
+            <span class="badge"></span>
+          </button>
+          <button class="action-btn">
+            <i class="ph ph-question"></i>
+          </button>
+          <div class="user-profile">
+            <img [src]="authService.currentUser()?.avatar" alt="Avatar">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="admin-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+<app-toast></app-toast>

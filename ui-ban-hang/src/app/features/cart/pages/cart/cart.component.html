@@ -1,0 +1,35 @@
+<div class="cart-container">
+  <div class="cart-layout" *ngIf="cartItems().length > 0; else emptyCart">
+
+    <!-- Left: Cart Items -->
+    <div class="cart-items-section">
+      <h1 class="section-title">Giỏ hàng của bạn ({{ cartItems().length }})</h1>
+
+      <app-cart-item *ngFor="let item of cartItems()" [item]="item" (onUpdateQty)="updateQty(item.id, $event)"
+        (onRemove)="removeItem(item.id)">
+      </app-cart-item>
+    </div>
+
+    <!-- Right: Checkout Info -->
+    <div class="checkout-section">
+      <div class="checkout-card">
+        <app-shipping-form [info]="customerInfo()"></app-shipping-form>
+
+        <app-cart-summary [totalPrice]="totalPrice()" [paymentMethod]="paymentMethod()" [isProcessing]="isProcessing()"
+          (onPaymentMethodChange)="paymentMethod.set($event)" (onCheckout)="onCheckout()">
+        </app-cart-summary>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-template #emptyCart>
+    <app-empty-cart></app-empty-cart>
+  </ng-template>
+
+  <!-- Confirm Order Modal -->
+  <app-confirm-modal *ngIf="showConfirmModal()" title="Xác nhận đặt hàng"
+    [message]="'Bạn có chắc chắn muốn đặt đơn hàng này?'" icon="ph-fill ph-shopping-cart" type="primary"
+    confirmText=" Đặt hàng" cancelText="Kiểm tra lại" (onConfirm)="confirmOrder()"
+    (onCancel)="showConfirmModal.set(false)"></app-confirm-modal>
+</div>

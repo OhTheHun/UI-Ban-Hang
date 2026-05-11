@@ -1,0 +1,100 @@
+<div class="table-card">
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="search-box">
+        <i class="ph ph-magnifying-glass"></i>
+        <input type="text" placeholder="Tìm khách hàng theo tên, email, sđt...">
+      </div>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn-outline">
+        <i class="ph ph-export"></i> Xuất Excel
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>KHÁCH HÀNG</th>
+          <th>THÔNG TIN LIÊN HỆ</th>
+          <th>TỔNG ĐƠN HÀNG</th>
+          <th>TỔNG CHI TIÊU</th>
+          <th>ĐƠN CUỐI</th>
+          <th>TRẠNG THÁI</th>
+          <th>THAO TÁC</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (customer of customers; track customer.id) {
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="avatar">
+                  @if (customer.image) {
+                    <img [src]="customer.image" alt="Avatar">
+                  } @else {
+                    <div class="avatar-placeholder">
+                      {{ customer.fullName.charAt(0) }}
+                    </div>
+                  }
+                </div>
+                <div class="info">
+                  <div class="name">{{ customer.fullName }}</div>
+                  <div class="id">ID: {{ customer.id }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <div class="email"><i class="ph ph-envelope"></i> {{ customer.email }}</div>
+                <div class="phone"><i class="ph ph-phone"></i> {{ customer.phone }}</div>
+              </div>
+            </td>
+            <td class="text-center">
+              <span class="count-badge">{{ customer.totalOrders }}</span>
+            </td>
+            <td class="text-highlight">
+              {{ customer.totalSpent | number }} đ
+            </td>
+            <td>
+              <div class="date-info">
+                {{ customer.lastOrderDate | date:'dd/MM/yyyy' }}
+              </div>
+            </td>
+            <td>
+              <span class="status-badge" [class.active]="customer.isActive">
+                {{ customer.isActive ? 'Đang hoạt động' : 'Bị khóa' }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" title="Xem chi tiết"><i class="ph ph-eye"></i></button>
+              <button class="btn-icon" title="Chỉnh sửa"><i class="ph ph-pencil"></i></button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty-state">
+              <i class="ph ph-users-three"></i>
+              <p>Không có khách hàng nào được tìm thấy</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-footer">
+    <div class="info">Hiển thị <strong>{{ customers.length }}</strong> của <strong>{{ totalItems }}</strong> khách hàng</div>
+    <div class="pagination">
+      <button class="btn-page" [disabled]="currentPage === 1" (click)="onPageChange.emit(currentPage - 1)">
+        <i class="ph ph-caret-left"></i>
+      </button>
+      <button class="btn-page active">{{ currentPage }}</button>
+      <button class="btn-page" [disabled]="true" (click)="onPageChange.emit(currentPage + 1)">
+        <i class="ph ph-caret-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

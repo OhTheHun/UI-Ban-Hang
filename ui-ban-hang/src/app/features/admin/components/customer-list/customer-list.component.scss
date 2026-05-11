@@ -1,0 +1,220 @@
+.table-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.toolbar {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+
+  .search-box {
+    position: relative;
+    i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 18px;
+    }
+    input {
+      padding: 10px 14px 10px 42px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      width: 320px;
+      background: #f8fafc;
+      transition: all 0.2s;
+      &:focus {
+        background: white;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        outline: none;
+      }
+    }
+  }
+
+  .btn-outline {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background: #f8fafc; border-color: #cbd5e1; }
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    padding: 14px 20px;
+    text-align: left;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  tr:hover { background: #f8fafc; }
+
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      
+      img { width: 100%; height: 100%; object-fit: cover; }
+      
+      .avatar-placeholder {
+        width: 100%;
+        height: 100%;
+        background: #eff6ff;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+      }
+    }
+
+    .info {
+      .name { font-weight: 600; color: #0f172a; margin-bottom: 2px; }
+      .id { font-size: 12px; color: #94a3b8; font-family: monospace; }
+    }
+  }
+
+  .contact-info {
+    .email, .phone {
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      i { font-size: 16px; color: #cbd5e1; }
+    }
+  }
+
+  .count-badge {
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .text-highlight {
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #fef2f2;
+    color: #991b1b;
+    
+    &.active {
+      background: #f0fdf4;
+      color: #166534;
+    }
+  }
+
+  .btn-icon {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background: #f1f5f9; color: #2563eb; }
+  }
+}
+
+.pagination-footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  .info { font-size: 14px; color: #64748b; }
+  
+  .pagination {
+    display: flex;
+    gap: 8px;
+    
+    .btn-page {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover:not(:disabled) { border-color: #cbd5e1; background: #f8fafc; }
+      
+      &.active {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: white;
+        font-weight: 700;
+      }
+      
+      &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px !important;
+  color: #94a3b8;
+  i { font-size: 48px; margin-bottom: 12px; }
+  p { margin: 0; font-size: 15px; font-style: italic; }
+}
+
+.text-center { text-align: center; }
