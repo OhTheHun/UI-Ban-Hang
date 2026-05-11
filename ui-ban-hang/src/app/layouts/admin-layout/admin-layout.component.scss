@@ -1,8 +1,8 @@
 .admin-container {
   display: flex;
   height: 100vh;
-  width: 100vw;
-  background-color: #ffffff;
+  width: 100%;
+  background-color: #f8fafc;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
 }
@@ -12,6 +12,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; // Important for flex children
 }
 
 .admin-header {
@@ -25,6 +26,7 @@
   z-index: 10;
 
   .header-left {
+    min-width: 200px;
     .page-title {
       font-size: 16px;
       font-weight: 700;
@@ -35,7 +37,7 @@
 
   .header-center {
     flex: 1;
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 40px;
 
     .search-box {
@@ -56,6 +58,10 @@
   }
 
   .header-right {
+    min-width: 200px;
+    display: flex;
+    justify-content: flex-end;
+    
     .header-actions {
       display: flex;
       align-items: center;
@@ -105,6 +111,7 @@
 .admin-content {
   flex: 1;
   overflow-y: auto;
-  padding: 40px;
-  background: #ffffff;
+  padding: 32px;
+  background: #f8fafc;
 }
+

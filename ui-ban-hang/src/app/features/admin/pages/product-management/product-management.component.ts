@@ -11,7 +11,7 @@ import { ToastService } from '../../../../core/services/toast.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './product-management.component.html',
-  styleUrl: './product-management.component.scss'
+  styleUrls: ['./product-management.component.scss']
 })
 export class ProductManagementComponent implements OnInit {
   searchQuery = '';
@@ -26,7 +26,7 @@ export class ProductManagementComponent implements OnInit {
   suppliers = signal<SupplierLookup[]>([]);
   isLoading = signal(false);
   isAdmin = computed(() => this.authService.currentUser()?.role === 'Admin');
-  
+
   // Modals
   selectedProduct = signal<ProductAdmin | null>(null);
   showAddModal = signal(false);
@@ -96,9 +96,9 @@ export class ProductManagementComponent implements OnInit {
   filteredProducts = computed(() => {
     const prods = this.products();
     if (!Array.isArray(prods)) return [];
-    
+
     let result = [...prods];
-    
+
     return result.sort((a, b) => {
       if (this.sortBy === 'name') return a.productName.localeCompare(b.productName);
       if (this.sortBy === 'price_asc') return a.price - b.price;
@@ -156,7 +156,7 @@ export class ProductManagementComponent implements OnInit {
     if (!this.isAdmin()) return;
     if (this.addProductForm.valid) {
       const productData = this.addProductForm.value;
-      
+
       if (this.isEditMode()) {
         const id = this.selectedProduct()?.id;
         if (id) {
