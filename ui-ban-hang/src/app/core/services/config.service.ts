@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ConfigService {
   // You can change this URL in one place
-  private readonly baseUrl = 'https://localhost:7161/api';
+  private readonly baseUrl = 'https://api-backendservice-hmfjfdgyhxfncghf.southeastasia-01.azurewebsites.net/api';
 
   get apiUrl(): string {
     return this.baseUrl;
