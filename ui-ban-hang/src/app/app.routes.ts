@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { roleRedirectGuard } from './core/guards/role-redirect.guard';
 import { customerGuard } from './core/guards/customer.guard';
 
 export const routes: Routes = [
@@ -23,8 +24,10 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
+        canActivate: [roleRedirectGuard],
+        loadComponent: () =>
+          import('./features/admin/pages/dashboard/dashboard.component')
+            .then(m => m.AdminDashboardComponent)
       },
 
       {

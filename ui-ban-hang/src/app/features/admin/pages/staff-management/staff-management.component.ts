@@ -114,9 +114,11 @@ export class StaffManagementComponent implements OnInit {
   }
 
   openEditModal(user: any) {
+    if (!user) return;
     this.isEditMode.set(true);
     this.selectedUser.set(user);
-    
+    this.activeDropdownId = null;
+
     this.userForm.patchValue({
       email: user.email,
       fullName: user.fullName,
@@ -124,15 +126,15 @@ export class StaffManagementComponent implements OnInit {
       address: user.address,
       role: user.role || 'Seller',
       birthday: user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '',
-      identify: user.identify || '',
-      salary: user.salary || 0,
+      identify: user.identify ?? '',
+      salary: user.salary ?? 0,
       isActive: user.isActive
     });
 
     this.userForm.get('password')?.clearValidators();
+    this.userForm.get('password')?.updateValueAndValidity();
     this.userForm.get('email')?.disable();
     this.showAddModal.set(true);
-    this.activeDropdownId = null;
   }
 
   closeModal() {
@@ -186,9 +188,10 @@ export class StaffManagementComponent implements OnInit {
   }
 
   deleteUser(user: any) {
+    if (!user) return;
     this.userToDelete.set(user);
-    this.showDeleteConfirm.set(true);
     this.activeDropdownId = null;
+    this.showDeleteConfirm.set(true);
   }
 
   confirmDelete() {
@@ -228,14 +231,24 @@ export class StaffManagementComponent implements OnInit {
     };
   }
 
-  @HostListener('document:click')
-  hostClick() {
+  @HostListener('document:click', ['$event'])
+  hostClick(event: MouseEvent) {
     this.activeDropdownId = null;
   }
 
-  get selectedUserForAction(): any {
+  getSelectedUserForAction(): any {
     if (!this.activeDropdownId) return null;
     const list = this.currentTab() === 'staff' ? this.staffList() : this.customerList();
-    return list.find(u => u.id === this.activeDropdownId);
+    return list.find(u => u.id === this.activeDropdownId) ?? null;
+  }
+
+  onEditAction() {
+    const user = this.getSelectedUserForAction();
+    this.openEditModal(user);
+  }
+
+  onDeleteAction() {
+    const user = this.getSelectedUserForAction();
+    this.deleteUser(user);
   }
 }

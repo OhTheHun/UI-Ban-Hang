@@ -1,4 +1,4 @@
-<div class="page-layout" (click)="hostClick()">
+<div class="page-layout">
   <div class="page-header">
     <div class="header-titles">
       <h2 class="title">Quản lý người dùng</h2>
@@ -94,11 +94,11 @@
 <!-- Action Dropdown -->
 <div class="global-dropdown-menu" *ngIf="activeDropdownId && currentTab() === 'staff'"
   [style.top]="dropdownPosition.top" [style.left]="dropdownPosition.left" (click)="$event.stopPropagation()">
-  <button class="dropdown-item" (click)="openEditModal(selectedUserForAction)">
+  <button class="dropdown-item" (click)="$event.stopPropagation(); onEditAction()">
     <i class="ph ph-pencil-simple"></i> Chỉnh sửa
   </button>
   <div class="dropdown-divider"></div>
-  <button class="dropdown-item text-red" (click)="deleteUser(selectedUserForAction)">
+  <button class="dropdown-item text-red" (click)="$event.stopPropagation(); onDeleteAction()">
     <i class="ph ph-trash"></i> Xóa người dùng
   </button>
 </div>

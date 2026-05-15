@@ -76,7 +76,9 @@ export class AuthService {
                 currentUser.phone,
               address:
                 profile.address ||
-                currentUser.address
+                currentUser.address,
+              // Always preserve role from session — profile API may not return it
+              role: currentUser.role
             };
 
             this._user.set(updatedUser);
