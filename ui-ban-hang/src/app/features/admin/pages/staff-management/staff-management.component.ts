@@ -143,47 +143,67 @@ export class StaffManagementComponent implements OnInit {
   }
 
   submitForm() {
-    if (this.userForm.valid || (this.isEditMode() && this.userForm.get('fullName')?.valid)) {
-      const formData = this.userForm.getRawValue();
-      
-      if (this.isEditMode()) {
-        const request: UpdateUserRequest = {
-          id: this.selectedUser()?.id!,
-          fullName: formData.fullName,
-          phone: formData.phone,
-          address: formData.address,
-          role: formData.role,
-          isActive: formData.isActive,
-          birthday: formData.birthday,
-          identify: formData.identify,
-          salary: formData.salary
-        };
+    if (this.userForm.invalid && !this.isEditMode()) {
+      this.userForm.markAllAsTouched();
+      return;
+    }
 
-        this.userAdminService.updateUser(request).subscribe({
-          next: () => {
-            this.toastService.success('Cập nhật người dùng thành công');
-            this.loadData();
-            this.closeModal();
-          },
-          error: (err) => {
-            this.toastService.error('Lỗi khi cập nhật người dùng');
-            console.error(err);
-          }
-        });
-      } else {
-        const request: CreateUserRequest = formData;
-        this.userAdminService.createUser(request).subscribe({
-          next: () => {
-            this.toastService.success('Thêm người dùng thành công');
-            this.loadData();
-            this.closeModal();
-          },
-          error: (err) => {
-            this.toastService.error('Lỗi khi thêm người dùng');
-            console.error(err);
-          }
-        });
-      }
+    const formData = this.userForm.getRawValue();
+    this.isLoading.set(true);
+
+    if (this.isEditMode()) {
+      const request: UpdateUserRequest = {
+        id: this.selectedUser()?.id!,
+        fullName: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
+        role: formData.role,
+        isActive: formData.isActive,
+        birthday: formData.birthday,
+        identify: formData.identify,
+        salary: Number(formData.salary || 0)
+      };
+
+      this.userAdminService.updateUser(request).subscribe({
+        next: () => {
+          this.toastService.success('Cập nhật người dùng thành công');
+          this.loadData();
+          this.closeModal();
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          this.toastService.error('Lỗi khi cập nhật người dùng');
+          console.error('Update Error:', err);
+          this.isLoading.set(false);
+        }
+      });
+    } else {
+      // CreateEmployeeRequestDto không có isActive theo Swagger
+      const request: CreateUserRequest = {
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
+        role: formData.role,
+        birthday: formData.birthday,
+        identify: formData.identify,
+        salary: Number(formData.salary || 0)
+      };
+
+      this.userAdminService.createUser(request).subscribe({
+        next: () => {
+          this.toastService.success('Thêm người dùng thành công');
+          this.loadData();
+          this.closeModal();
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          this.toastService.error('Lỗi khi thêm người dùng');
+          console.error('Create Error:', err);
+          this.isLoading.set(false);
+        }
+      });
     }
   }
 

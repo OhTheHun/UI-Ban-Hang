@@ -52,7 +52,7 @@
               <div class="user-cell">
                 <div class="avatar">
                   <img *ngIf="user.image" [src]="user.image" [alt]="user.fullName">
-                  <span *ngIf="!user.image">{{ user.fullName.charAt(0) }}</span>
+                  <span *ngIf="!user.image">{{ user.fullName?.charAt(0) ?? '?' }}</span>
                 </div>
                 <div class="info">
                   <span class="name">{{ user.fullName }}</span>
@@ -170,9 +170,10 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn-outline" (click)="closeModal()">Hủy</button>
-      <button class="btn-primary" (click)="submitForm()" [disabled]="userForm.invalid && !isEditMode()">
-        {{ isEditMode() ? 'Cập nhật' : 'Thêm mới' }}
+      <button class="btn-outline" (click)="closeModal()" [disabled]="isLoading()">Hủy</button>
+      <button class="btn-primary" (click)="submitForm()" [disabled]="(userForm.invalid && !isEditMode()) || isLoading()">
+        <span *ngIf="!isLoading()">{{ isEditMode() ? 'Cập nhật' : 'Thêm mới' }}</span>
+        <span *ngIf="isLoading()" class="spinner-small"></span>
       </button>
     </div>
   </div>
