@@ -1,5 +1,5 @@
 import { Component, computed } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../features/auth/services/auth.service';
 
@@ -11,7 +11,12 @@ import { AuthService } from '../../../features/auth/services/auth.service';
   styleUrl: './admin-sidebar.component.scss'
 })
 export class AdminSidebarComponent {
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService, private router: Router) { }
+
+  logout() {
+    this.authService.logoutOnly();
+    this.router.navigate(['/Operations/login']);
+  }
 
   user = computed(() => this.authService.currentUser());
 
@@ -21,18 +26,18 @@ export class AdminSidebarComponent {
 
   isSeller = computed(() => this.role() === 'Seller');
 
-  isWarehouse = computed(() => this.role() === 'WarehouseManager');
+  isWarehouse = computed(() => this.role() === 'WareHouseManager');
 
   canSeeOrders = computed(() => {
     return ['Admin'].includes(this.role() ?? '');
   });
 
   canSeeProducts = computed(() => {
-    return ['Admin', 'Seller', 'WarehouseManager'].includes(this.role() ?? '');
+    return ['Admin', 'Seller', 'WareHouseManager'].includes(this.role() ?? '');
   });
 
   canSeeSuppliers = computed(() => {
-    return ['Admin', 'WarehouseManager'].includes(this.role() ?? '');
+    return ['Admin', 'WareHouseManager'].includes(this.role() ?? '');
   });
 
   canSeeApprovals = computed(() => {
@@ -41,6 +46,10 @@ export class AdminSidebarComponent {
 
   canSeeReports = computed(() => {
     return ['Admin'].includes(this.role() ?? '');
+  });
+
+  canSeeImports = computed(() => {
+    return ['Admin', 'WareHouseManager'].includes(this.role() ?? '');
   });
 
   canSeeUsers = computed(() => {

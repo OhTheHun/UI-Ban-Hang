@@ -18,7 +18,7 @@ export const routes: Routes = [
         .then(m => m.AdminLayoutComponent),
     canActivate: [roleGuard],
     data: {
-      roles: ['Admin', 'Seller', 'WarehouseManager']
+      roles: ['Admin', 'Seller', 'WareHouseManager']
     },
     children: [
       {
@@ -64,7 +64,7 @@ export const routes: Routes = [
         path: 'products',
         canActivate: [roleGuard],
         data: {
-          roles: ['Admin', 'Seller', 'WarehouseManager']
+          roles: ['Admin', 'Seller', 'WareHouseManager']
         },
         loadComponent: () =>
           import('./features/admin/pages/product-management/product-management.component')
@@ -75,7 +75,7 @@ export const routes: Routes = [
         path: 'suppliers',
         canActivate: [roleGuard],
         data: {
-          roles: ['Admin', 'WarehouseManager']
+          roles: ['Admin', 'WareHouseManager']
         },
         loadComponent: () =>
           import('./features/admin/pages/supplier-management/supplier-management.component')
@@ -97,11 +97,22 @@ export const routes: Routes = [
         path: 'reports',
         canActivate: [roleGuard],
         data: {
-          roles: ['Admin', 'Seller', 'WarehouseManager']
+          roles: ['Admin', 'Seller', 'WareHouseManager']
         },
         loadComponent: () =>
           import('./features/admin/pages/dashboard/dashboard.component')
             .then(m => m.AdminDashboardComponent)
+      },
+
+      {
+        path: 'import',
+        canActivate: [roleGuard],
+        data: {
+          roles: ['Admin', 'WareHouseManager']
+        },
+        loadComponent: () =>
+          import('./features/admin/pages/import-management/import-management.component')
+            .then(m => m.ImportManagementComponent)
       }
     ]
   },
@@ -169,6 +180,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/auth/pages/signup/signup.page')
             .then(m => m.SignupPageComponent)
+      },
+
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/pages/forgot-password/forgot-password.component')
+            .then(m => m.ForgotPasswordComponent)
       }
     ]
   }

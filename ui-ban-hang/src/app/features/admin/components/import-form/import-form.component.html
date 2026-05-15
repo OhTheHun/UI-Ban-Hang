@@ -1,0 +1,94 @@
+<div class="form-drawer">
+  <div class="drawer-header">
+    <h2>Tạo phiếu nhập mới</h2>
+    <button (click)="onClose()" class="btn-close">
+      <i class="ph-bold ph-x"></i>
+    </button>
+  </div>
+
+  <div class="drawer-body">
+    <form [formGroup]="importForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Thông tin chung -->
+      <div class="form-header-fields">
+        <div class="form-group">
+          <label class="form-label">Ghi chú phiếu nhập</label>
+          <textarea formControlName="note" rows="2" class="custom-input" placeholder="Nhập ghi chú hoặc lý do nhập kho..."></textarea>
+        </div>
+      </div>
+
+      <!-- Chi tiết hàng hóa -->
+      <div class="form-section">
+        <div class="section-title">
+          <label>Chi tiết sản phẩm nhập</label>
+          <button type="button" (click)="addDetail()" class="btn-add-row">
+            <i class="ph-bold ph-plus"></i>
+            Thêm dòng
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="import-table">
+            <thead>
+              <tr>
+                <th class="col-product">Sản phẩm</th>
+                <th class="col-qty text-center">SL</th>
+                <th class="col-price">Đơn giá</th>
+                <th class="col-total">Thành tiền</th>
+                <th class="col-action"></th>
+              </tr>
+            </thead>
+            <tbody formArrayName="details">
+              <tr *ngFor="let detail of details.controls; let i = index" [formGroupName]="i">
+                <td>
+                  <select formControlName="productId" (change)="onProductChange(i)" class="table-select">
+                    <option value="">-- Chọn SP --</option>
+                    <option *ngFor="let p of products()" [value]="p.id">{{ p.productName }}</option>
+                  </select>
+                </td>
+                <td class="text-center">
+                  <input type="number" formControlName="quantity" (input)="calculateRowTotal(i)" min="1" class="table-input text-center">
+                </td>
+                <td>
+                  <input type="number" formControlName="importPrice" (input)="calculateRowTotal(i)" min="0" class="table-input">
+                </td>
+                <td class="col-total">
+                  {{ calculateRowTotal(i) | number }}
+                </td>
+                <td class="text-center">
+                  <button *ngIf="details.length > 1" type="button" (click)="removeDetail(i)" class="btn-delete-icon">
+                    <i class="ph-bold ph-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tổng hợp thanh toán -->
+  <div class="summary-section">
+    <div class="summary-row">
+      <span>Số lượng mặt hàng:</span>
+      <span>{{ details.length }}</span>
+    </div>
+    <div class="summary-row total">
+      <span>TỔNG TIỀN PHIẾU:</span>
+      <span>{{ totalAmount | number }} đ</span>
+    </div>
+  </div>
+
+  <div class="drawer-footer">
+    <button type="button" (click)="onClose()" class="btn-secondary">
+      Hủy bỏ
+    </button>
+    <button type="button" (click)="onSubmit()" [disabled]="importForm.invalid" class="btn-submit">
+      <i class="ph-bold ph-check-circle"></i>
+      Xác nhận nhập kho
+    </button>
+  </div>
+</div>
+
+<div class="form-drawer-overlay" (click)="onClose()"></div>

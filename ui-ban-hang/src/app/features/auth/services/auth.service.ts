@@ -141,11 +141,22 @@ export class AuthService {
       );
   }
 
-  logout(): void {
+  // Forgot Password & Reset Password
+  forgotPassword(email: string) {
+    return this.http.post(this.config.getEndpoint('auth/forgot-password'), { email });
+  }
+
+  resetPassword(data: any) {
+    return this.http.post(this.config.getEndpoint('auth/reset-password'), data);
+  }
+
+  logoutOnly(): void {
     this.tokenService.clear();
-
     this._user.set(null);
+  }
 
+  logout(): void {
+    this.logoutOnly();
     this.router.navigate(['/']);
   }
 

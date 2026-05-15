@@ -39,7 +39,7 @@ export class AdminLoginComponent {
       next: () => {
         const user = this.authService.currentUser();
 
-        if (user && ['Admin', 'Seller', 'WarehouseManager'].includes(user.role)) {
+        if (user && ['Admin', 'Seller', 'WareHouseManager'].includes(user.role)) {
 
           this.toast.success('Đăng nhập quản trị thành công!');
 
@@ -49,7 +49,7 @@ export class AdminLoginComponent {
           else if (user.role === 'Seller') {
             this.router.navigate(['/Operations/products']);
           }
-          else if (user.role === 'WarehouseManager') {
+          else if (user.role === 'WareHouseManager') {
             this.router.navigate(['/Operations/products']);
           }
 

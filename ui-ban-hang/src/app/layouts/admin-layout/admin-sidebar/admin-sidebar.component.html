@@ -32,6 +32,11 @@
       <span>Nhà cung cấp</span>
     </a>
 
+    <a *ngIf="canSeeImports()" routerLink="/Operations/import" routerLinkActive="active" class="nav-link">
+      <i class="ph ph-download-simple"></i>
+      <span>Nhập kho</span>
+    </a>
+
     <a *ngIf="canSeeApprovals()" routerLink="/Operations/approvals" routerLinkActive="active" class="nav-link">
       <i class="ph ph-check-square"></i>
       <span>Phê duyệt đơn</span>
@@ -54,7 +59,7 @@
         <span>Cài đặt</span>
       </a>
 
-      <button (click)="authService.logout()" class="footer-link logout">
+      <button (click)="logout()" class="footer-link logout">
         <i class="ph ph-sign-out"></i>
         <span>Đăng xuất</span>
       </button>
