@@ -35,8 +35,8 @@ export class StaffManagementComponent implements OnInit {
   userToDelete = signal<StaffDTO | CustomerDTO | null>(null);
 
   // Dropdown Action
-  activeDropdownId: string | null = null;
-  dropdownPosition = { top: '0px', left: '0px' };
+  activeDropdownId = signal<string | null>(null);
+  dropdownPosition = signal({ top: '0px', left: '0px' });
 
   constructor(
     private userAdminService: UserAdminService,
@@ -117,7 +117,7 @@ export class StaffManagementComponent implements OnInit {
     if (!user) return;
     this.isEditMode.set(true);
     this.selectedUser.set(user);
-    this.activeDropdownId = null;
+    this.activeDropdownId.set(null);
 
     this.userForm.patchValue({
       email: user.email,
@@ -190,7 +190,7 @@ export class StaffManagementComponent implements OnInit {
   deleteUser(user: any) {
     if (!user) return;
     this.userToDelete.set(user);
-    this.activeDropdownId = null;
+    this.activeDropdownId.set(null);
     this.showDeleteConfirm.set(true);
   }
 
@@ -214,10 +214,10 @@ export class StaffManagementComponent implements OnInit {
   // UI Helpers
   toggleDropdown(event: MouseEvent, userId: string) {
     event.stopPropagation();
-    if (this.activeDropdownId === userId) {
-      this.activeDropdownId = null;
+    if (this.activeDropdownId() === userId) {
+      this.activeDropdownId.set(null);
     } else {
-      this.activeDropdownId = userId;
+      this.activeDropdownId.set(userId);
       this.updateDropdownPosition(event);
     }
   }
@@ -225,21 +225,22 @@ export class StaffManagementComponent implements OnInit {
   updateDropdownPosition(event: MouseEvent) {
     const button = event.currentTarget as HTMLElement;
     const rect = button.getBoundingClientRect();
-    this.dropdownPosition = {
-      top: `${rect.bottom + window.scrollY + 5}px`,
-      left: `${rect.left + window.scrollX - 120}px`
-    };
+    this.dropdownPosition.set({
+      top: `${rect.bottom + 5}px`,
+      left: `${rect.left - 120}px`
+    });
   }
 
   @HostListener('document:click', ['$event'])
   hostClick(event: MouseEvent) {
-    this.activeDropdownId = null;
+    this.activeDropdownId.set(null);
   }
 
   getSelectedUserForAction(): any {
-    if (!this.activeDropdownId) return null;
+    const id = this.activeDropdownId();
+    if (!id) return null;
     const list = this.currentTab() === 'staff' ? this.staffList() : this.customerList();
-    return list.find(u => u.id === this.activeDropdownId) ?? null;
+    return list.find(u => u.id === id) ?? null;
   }
 
   onEditAction() {
