@@ -58,7 +58,7 @@ export class StaffManagementComponent implements OnInit {
     });
   }
 
-  private readonly MANAGED_ROLES = ['Seller', 'WareHouseManager'];
+  private readonly MANAGED_ROLES = ['Seller', 'WareHouseManager', 'HR'];
 
   ngOnInit() {
     this.loadData();
@@ -97,10 +97,10 @@ export class StaffManagementComponent implements OnInit {
     
     if (!query) return list;
     
-    return list.filter(u => 
-      u.fullName.toLowerCase().includes(query) || 
-      u.email.toLowerCase().includes(query) ||
-      u.phone.includes(query)
+    return list.filter(u =>
+      (u.fullName || '').toLowerCase().includes(query) ||
+      (u.email || '').toLowerCase().includes(query) ||
+      (u.phone || '').includes(query)
     );
   });
 

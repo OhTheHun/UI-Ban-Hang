@@ -52,7 +52,7 @@
               <div class="user-cell">
                 <div class="avatar">
                   <img *ngIf="user.image" [src]="user.image" [alt]="user.fullName">
-                  <span *ngIf="!user.image">{{ user.fullName?.charAt(0) ?? '?' }}</span>
+                  <span *ngIf="!user.image">{{ (user.fullName || '').charAt(0) || '?' }}</span>
                 </div>
                 <div class="info">
                   <span class="name">{{ user.fullName }}</span>
@@ -154,6 +154,7 @@
           <select formControlName="role">
             <option value="Seller">Nhân viên bán hàng</option>
             <option value="WareHouseManager">Quản lý kho</option>
+            <option value="HR">HR</option>
           </select>
         </div>
 
