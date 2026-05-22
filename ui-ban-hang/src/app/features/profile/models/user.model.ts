@@ -8,6 +8,11 @@ export interface UserProfileResponse {
   phone: string;
   address: string;
   role: string;
+  image?: string;
+  avatar?: string;
+  avatarUrl?: string;
+  imageUrl?: string;
+  url?: string;
 }
 
 /**
@@ -17,6 +22,12 @@ export interface UpdateProfileRequest {
   fullName: string;
   phone: string;
   address: string;
+}
+
+export interface ChangePasswordRequest {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
 }
 
 /**

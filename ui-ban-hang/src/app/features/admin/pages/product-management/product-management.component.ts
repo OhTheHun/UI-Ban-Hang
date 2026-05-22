@@ -1,6 +1,7 @@
 import { Component, signal, computed, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 import { ProductAdminService, ProductAdmin } from '../../services/product-admin.service';
 import { LookupService, CategoryLookup, DonViTinhLookup, SupplierLookup } from '../../services/lookup.service';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -18,6 +19,8 @@ export class ProductManagementComponent implements OnInit {
   categoryFilter = 'all';
   statusFilter = 'all';
   sortBy = 'name';
+  readonly pageSize = 10;
+  currentPage = signal(1);
 
   // State
   products = signal<ProductAdmin[]>([]);
@@ -25,6 +28,9 @@ export class ProductManagementComponent implements OnInit {
   units = signal<DonViTinhLookup[]>([]);
   suppliers = signal<SupplierLookup[]>([]);
   isLoading = signal(false);
+  isSavingProduct = signal(false);
+  productImagePreview = signal('');
+  selectedProductImageFile = signal<File | null>(null);
   isAdmin = computed(() => this.authService.currentUser()?.role === 'Admin');
 
   // Modals
@@ -83,6 +89,7 @@ export class ProductManagementComponent implements OnInit {
     this.productAdminService.getProducts(params).subscribe({
       next: (res) => {
         this.products.set(res);
+        this.currentPage.set(1);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
@@ -90,6 +97,7 @@ export class ProductManagementComponent implements OnInit {
   }
 
   onSearch() {
+    this.currentPage.set(1);
     this.fetchProducts();
   }
 
@@ -107,6 +115,52 @@ export class ProductManagementComponent implements OnInit {
     });
   });
 
+  totalPages = computed(() => {
+    return Math.max(1, Math.ceil(this.filteredProducts().length / this.pageSize));
+  });
+
+  paginatedProducts = computed(() => {
+    const page = Math.min(this.currentPage(), this.totalPages());
+    const start = (page - 1) * this.pageSize;
+
+    return this.filteredProducts().slice(start, start + this.pageSize);
+  });
+
+  pageNumbers = computed(() => {
+    const total = this.totalPages();
+    const current = Math.min(this.currentPage(), total);
+    const start = Math.max(1, current - 2);
+    const end = Math.min(total, start + 4);
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  });
+
+  visibleFrom = computed(() => {
+    if (!this.filteredProducts().length) return 0;
+    return (Math.min(this.currentPage(), this.totalPages()) - 1) * this.pageSize + 1;
+  });
+
+  visibleTo = computed(() => {
+    return Math.min(
+      Math.min(this.currentPage(), this.totalPages()) * this.pageSize,
+      this.filteredProducts().length
+    );
+  });
+
+  goToPage(page: number) {
+    const nextPage = Math.min(Math.max(page, 1), this.totalPages());
+    this.currentPage.set(nextPage);
+    this.activeDropdownId = null;
+  }
+
+  nextPage() {
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  previousPage() {
+    this.goToPage(this.currentPage() - 1);
+  }
+
   // Modals
   viewProduct(product: ProductAdmin) {
     this.selectedProduct.set(product);
@@ -120,6 +174,9 @@ export class ProductManagementComponent implements OnInit {
   openAddModal() {
     if (!this.isAdmin()) return;
     this.isEditMode.set(false);
+    this.selectedProduct.set(null);
+    this.resetProductImageState();
+    this.addProductForm.reset({ status: 2, price: 0, discountPrice: 0, cost: 0, imageUrl: '' });
     this.showAddModal.set(true);
   }
 
@@ -140,6 +197,8 @@ export class ProductManagementComponent implements OnInit {
       imageUrl: product.imageUrl,
       status: product.status
     });
+    this.productImagePreview.set(product.imageUrl || '');
+    this.selectedProductImageFile.set(null);
     this.showAddModal.set(true);
     this.activeDropdownId = null;
   }
@@ -147,6 +206,7 @@ export class ProductManagementComponent implements OnInit {
   closeAddModal() {
     this.showAddModal.set(false);
     this.addProductForm.reset({ status: 2, price: 0, discountPrice: 0, cost: 0 });
+    this.resetProductImageState();
     if (this.isEditMode()) {
       this.selectedProduct.set(null);
     }
@@ -154,38 +214,81 @@ export class ProductManagementComponent implements OnInit {
 
   submitAddProduct() {
     if (!this.isAdmin()) return;
-    if (this.addProductForm.valid) {
-      const productData = this.addProductForm.value;
 
-      if (this.isEditMode()) {
-        const id = this.selectedProduct()?.id;
-        if (id) {
-          this.productAdminService.updateProduct({ ...productData, id }).subscribe({
-            next: () => {
-              this.toastService.success('Cập nhật sản phẩm thành công');
-              this.fetchProducts();
-              this.closeAddModal();
-            },
-            error: (err) => {
-              this.toastService.error('Lỗi khi cập nhật sản phẩm');
-              console.error('Error updating product:', err);
-            }
-          });
-        }
-      } else {
-        this.productAdminService.addProduct(productData).subscribe({
-          next: () => {
-            this.toastService.success('Thêm sản phẩm thành công');
-            this.fetchProducts();
-            this.closeAddModal();
-          },
-          error: (err) => {
-            this.toastService.error('Lỗi khi thêm sản phẩm');
-            console.error('Error adding product:', err);
-          }
-        });
-      }
+    if (this.addProductForm.invalid || this.isSavingProduct()) {
+      this.addProductForm.markAllAsTouched();
+      return;
     }
+
+    const selectedFile = this.selectedProductImageFile();
+    this.isSavingProduct.set(true);
+
+    const productData = {
+      ...this.addProductForm.getRawValue(),
+      imageFile: selectedFile
+    };
+
+    const request$ = this.isEditMode()
+      ? this.productAdminService.updateProduct({
+        ...productData,
+        id: this.selectedProduct()?.id
+      })
+      : this.productAdminService.addProduct(productData);
+
+    request$
+      .pipe(finalize(() => this.isSavingProduct.set(false)))
+      .subscribe({
+        next: () => {
+          this.toastService.success(
+            this.isEditMode()
+              ? 'Cập nhật sản phẩm thành công'
+              : 'Thêm sản phẩm thành công'
+          );
+          this.fetchProducts();
+          this.closeAddModal();
+        },
+        error: (err: unknown) => {
+          this.toastService.error(
+            this.isEditMode()
+              ? 'Lỗi khi cập nhật sản phẩm'
+              : 'Lỗi khi thêm sản phẩm'
+          );
+          console.error('Error saving product:', err);
+        }
+      });
+  }
+
+  onProductImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.toastService.warning('Vui lòng chọn file hình ảnh');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastService.warning('Hình ảnh không được vượt quá 5MB');
+      input.value = '';
+      return;
+    }
+
+    this.selectedProductImageFile.set(file);
+    this.productImagePreview.set(URL.createObjectURL(file));
+  }
+
+  removeProductImage() {
+    this.selectedProductImageFile.set(null);
+    this.productImagePreview.set('');
+    this.addProductForm.patchValue({ imageUrl: '' });
+  }
+
+  private resetProductImageState() {
+    this.selectedProductImageFile.set(null);
+    this.productImagePreview.set('');
   }
 
   deleteProduct(product: ProductAdmin) {
@@ -270,4 +373,3 @@ export class ProductManagementComponent implements OnInit {
     return this.categories().find(c => c.id === id)?.tenDanhMuc || 'N/A';
   }
 }
-

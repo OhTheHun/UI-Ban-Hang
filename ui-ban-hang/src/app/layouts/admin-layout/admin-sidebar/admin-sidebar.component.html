@@ -14,7 +14,7 @@
 
     <a *ngIf="canSeeUsers()" routerLink="/Operations/staff" routerLinkActive="active" class="nav-link">
       <i class="ph ph-users-three"></i>
-      <span>Quản lý người dùng</span>
+      <span>Quản lý nhân viên</span>
     </a>
 
     <a *ngIf="canSeeProducts()" routerLink="/Operations/products" routerLinkActive="active" class="nav-link">
@@ -54,9 +54,9 @@
     </button>
 
     <div class="footer-links">
-      <a routerLink="/Operations/settings" class="footer-link">
-        <i class="ph ph-gear"></i>
-        <span>Cài đặt</span>
+      <a routerLink="/Operations/account" routerLinkActive="active" class="footer-link">
+        <i class="ph ph-user-circle"></i>
+        <span>Tài khoản</span>
       </a>
 
       <button (click)="logout()" class="footer-link logout">

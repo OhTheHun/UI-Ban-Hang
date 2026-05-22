@@ -1,0 +1,105 @@
+<section class="account-page">
+  <div class="account-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Operations</p>
+      <h2>Tài khoản của tôi</h2>
+      <p class="hero-subtitle">{{ user()?.email }}</p>
+    </div>
+
+    <div class="hero-badge">
+      <i class="ph ph-shield-check"></i>
+      <span>{{ user()?.role || 'Operation' }}</span>
+    </div>
+  </div>
+
+  <div class="account-grid">
+    <article class="profile-panel">
+      <div class="profile-cover"></div>
+
+      <div class="avatar-block">
+        <div class="avatar-frame">
+          <img [src]="previewUrl() || user()?.avatar" alt="Ảnh đại diện">
+          <span class="status-indicator"></span>
+        </div>
+
+        <label class="upload-button" for="avatarInput">
+          <i class="ph ph-camera"></i>
+          <span>{{ isUploading() ? 'Đang tải...' : 'Đổi ảnh' }}</span>
+        </label>
+
+        <input
+          id="avatarInput"
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          [disabled]="isUploading()"
+        >
+      </div>
+
+      <div class="profile-summary">
+        <h3>{{ user()?.fullname || 'Operations user' }}</h3>
+        <p>{{ user()?.email }}</p>
+      </div>
+
+      <div class="profile-meta">
+        <div>
+          <i class="ph ph-identification-card"></i>
+          <span>{{ user()?.role || 'Operation' }}</span>
+        </div>
+        <div>
+          <i class="ph ph-cloud-check"></i>
+          <span>{{ selectedFileName() || 'Cloud avatar' }}</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="password-panel">
+      <div class="panel-header">
+        <div class="header-icon">
+          <i class="ph ph-lock-key-open"></i>
+        </div>
+        <div>
+          <p class="eyebrow">Bảo mật</p>
+          <h3>Đổi mật khẩu</h3>
+        </div>
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+        <label>
+          <span>Mật khẩu hiện tại</span>
+          <div class="input-shell">
+            <i class="ph ph-key"></i>
+            <input type="password" formControlName="currentPassword" autocomplete="current-password">
+          </div>
+        </label>
+
+        <label>
+          <span>Mật khẩu mới</span>
+          <div class="input-shell">
+            <i class="ph ph-lock"></i>
+            <input type="password" formControlName="newPassword" autocomplete="new-password">
+          </div>
+          @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
+            <small>Mật khẩu mới tối thiểu 6 ký tự.</small>
+          }
+        </label>
+
+        <label>
+          <span>Nhập lại mật khẩu mới</span>
+          <div class="input-shell">
+            <i class="ph ph-check-circle"></i>
+            <input type="password" formControlName="confirmPassword" autocomplete="new-password">
+          </div>
+          @if (passwordForm.get('confirmPassword')?.hasError('mismatch')) {
+            <small>Mật khẩu nhập lại không khớp.</small>
+          }
+        </label>
+
+        <button type="submit" [disabled]="isChangingPassword() || passwordForm.invalid">
+          <i class="ph ph-shield-check"></i>
+          <span>{{ isChangingPassword() ? 'Đang lưu...' : 'Cập nhật mật khẩu' }}</span>
+        </button>
+      </form>
+    </article>
+  </div>
+</section>

@@ -19,7 +19,7 @@ export const routes: Routes = [
         .then(m => m.AdminLayoutComponent),
     canActivate: [roleGuard],
     data: {
-      roles: ['Admin', 'Seller', 'WareHouseManager']
+      roles: ['Admin', 'Seller', 'WareHouseManager', 'HR']
     },
     children: [
       {
@@ -56,7 +56,7 @@ export const routes: Routes = [
         path: 'staff',
         canActivate: [roleGuard],
         data: {
-          roles: ['Admin']
+          roles: ['Admin', 'HR']
         },
         loadComponent: () =>
           import('./features/admin/pages/staff-management/staff-management.component')
@@ -116,6 +116,17 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/pages/import-management/import-management.component')
             .then(m => m.ImportManagementComponent)
+      },
+
+      {
+        path: 'account',
+        canActivate: [roleGuard],
+        data: {
+          roles: ['Admin', 'Seller', 'WareHouseManager', 'HR']
+        },
+        loadComponent: () =>
+          import('./features/admin/pages/operation-account/operation-account.component')
+            .then(m => m.OperationAccountComponent)
       }
     ]
   },
@@ -129,6 +140,13 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        loadComponent: () =>
+          import('./features/home/home.component')
+            .then(m => m.HomeComponent)
+      },
+
+      {
+        path: 'home',
         loadComponent: () =>
           import('./features/home/home.component')
             .then(m => m.HomeComponent)
@@ -161,6 +179,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/cart/pages/cart/cart.component')
             .then(m => m.CartComponent)
+      },
+
+      {
+        path: 'payment/vnpay-return',
+        loadComponent: () =>
+          import('./features/payment/vnpay-return/vnpay-return.component')
+            .then(m => m.VnpayReturnComponent)
+      },
+
+      {
+        path: 'payment/vnpay/return',
+        loadComponent: () =>
+          import('./features/payment/vnpay-return/vnpay-return.component')
+            .then(m => m.VnpayReturnComponent)
       }
     ]
   },

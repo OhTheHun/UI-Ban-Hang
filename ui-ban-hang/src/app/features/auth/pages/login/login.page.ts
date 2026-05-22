@@ -35,7 +35,7 @@ export class LoginPageComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {
           const user = this.authService.currentUser();
-          const managementRoles = ['Admin', 'Seller', 'WareHouseManager'];
+          const managementRoles = ['Admin', 'Seller', 'WareHouseManager', 'HR'];
           
           if (user && managementRoles.includes(user.role)) {
             this.authService.logout();

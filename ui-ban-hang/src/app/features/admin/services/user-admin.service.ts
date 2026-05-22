@@ -2,8 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ConfigService } from '../../../core/services/config.service';
-import { StaffDTO, CustomerDTO, CreateUserRequest, UpdateUserRequest } from '../models/staff.dto';
-export type { StaffDTO, CustomerDTO, CreateUserRequest, UpdateUserRequest };
+import {
+  StaffDTO,
+  CustomerDTO,
+  CreateUserRequest,
+  UpdateUserRequest,
+  ChangePasswordRequest,
+  UploadAvatarResponse
+} from '../models/staff.dto';
+export type {
+  StaffDTO,
+  CustomerDTO,
+  CreateUserRequest,
+  UpdateUserRequest,
+  ChangePasswordRequest,
+  UploadAvatarResponse
+};
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +51,22 @@ export class UserAdminService {
   deleteUser(userId: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/delete/${userId}`);
   }
-}
 
+  uploadAvatar(userId: string, file: File): Observable<UploadAvatarResponse> {
+    const formData = new FormData();
+    formData.append('userId', userId);
+    formData.append('file', file);
+
+    return this.http.post<UploadAvatarResponse>(
+      this.config.getEndpoint(`user/${userId}/avatar`),
+      formData
+    );
+  }
+
+  changePassword(userId: string, request: ChangePasswordRequest): Observable<any> {
+    return this.http.put(
+      this.config.getEndpoint(`user/${userId}/change-password`),
+      request
+    );
+  }
+}

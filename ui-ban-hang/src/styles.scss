@@ -26,6 +26,35 @@ body {
 
 /* Shared Admin UI Patterns */
 
+// Admin page header typography - matches Product Management header
+.admin-content {
+  .page-header {
+    .header-titles,
+    .header-info {
+      .title,
+      h1,
+      h2 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      .subtitle,
+      p {
+        margin: 4px 0 0 0;
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.5;
+        letter-spacing: 0;
+      }
+    }
+  }
+}
+
 // Buttons
 .btn-primary {
   background: #2563eb;

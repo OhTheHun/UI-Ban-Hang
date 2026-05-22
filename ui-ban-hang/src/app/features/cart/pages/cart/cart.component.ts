@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect, OnInit } from '@angular/core';
+import { Component, inject, signal, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -40,7 +40,6 @@ export class CartComponent implements OnInit {
   isLoggedIn = this.authService.isLoggedIn;
   currentUser = this.authService.currentUser;
 
-  // Checkout info
   customerInfo = signal({
     name: '',
     phone: '',
@@ -51,16 +50,7 @@ export class CartComponent implements OnInit {
   isProcessing = signal(false);
   showConfirmModal = signal(false);
 
-  ngOnInit() {
-    // Luôn làm mới thông tin profile khi vào giỏ hàng để đảm bảo có địa chỉ/sdt mới nhất
-    const user = this.currentUser();
-    if (user && user.id) {
-      this.authService.refreshProfile(user.id);
-    }
-  }
-
   constructor() {
-    // Tự động điền thông tin nếu đã đăng nhập và có dữ liệu
     effect(() => {
       const user = this.currentUser();
       if (user) {
@@ -71,6 +61,13 @@ export class CartComponent implements OnInit {
         });
       }
     }, { allowSignalWrites: true });
+  }
+
+  ngOnInit() {
+    const user = this.currentUser();
+    if (user?.id) {
+      this.authService.refreshProfile(user.id);
+    }
   }
 
   updateQty(id: string, delta: number) {
@@ -91,7 +88,6 @@ export class CartComponent implements OnInit {
       return;
     }
 
-    // Mở modal xác nhận thay vì window.confirm
     this.showConfirmModal.set(true);
   }
 
@@ -99,7 +95,6 @@ export class CartComponent implements OnInit {
     this.showConfirmModal.set(false);
     this.isProcessing.set(true);
 
-    // 1. Create Invoice
     const user = this.currentUser();
     const info = this.customerInfo();
 
@@ -112,23 +107,32 @@ export class CartComponent implements OnInit {
       totalAmount: this.totalPrice()
     };
 
-    console.log('Sending invoice request:', invoiceRequest);
-
     this.invoiceService.createInvoice(invoiceRequest).subscribe({
       next: (invoice: any) => {
-        console.log('Invoice created successfully:', invoice);
-        // 2. Add List Items
+        const invoiceData = this.getResponseData(invoice);
+        const invoiceId = this.getInvoiceId(invoiceData);
+
+        if (!invoiceId) {
+          this.toastService.error('Không tìm thấy mã hóa đơn sau khi tạo đơn hàng.');
+          this.isProcessing.set(false);
+          return;
+        }
+
         const items = this.cartItems().map(item => ({
-          invoiceId: invoice.id,
+          invoiceId,
           productId: item.id,
           quantity: item.quantity,
           total: item.price * item.quantity
         }));
 
-        console.log('Adding invoice items:', items);
         this.invoiceService.addInvoiceItems(items).subscribe({
           next: () => {
-            this.toastService.success('Đặt hàng thành công, Cảm ơn bạn đã mua sắm.');
+            if (this.paymentMethod() === 'VNPAY') {
+              this.redirectToVnpay(invoiceId);
+              return;
+            }
+
+            this.toastService.success('Đặt hàng thành công, cảm ơn bạn đã mua sắm.');
             this.cartService.clearCart();
             this.isProcessing.set(false);
             this.router.navigate(['/']);
@@ -146,5 +150,55 @@ export class CartComponent implements OnInit {
         this.isProcessing.set(false);
       }
     });
+  }
+
+  private redirectToVnpay(invoiceId: string): void {
+    this.invoiceService.createVnpayPayment({
+      invoiceId,
+      ipAddress: '127.0.0.1'
+    }).subscribe({
+      next: (response) => {
+        const paymentUrl = this.getPaymentUrl(response);
+
+        if (!paymentUrl) {
+          this.toastService.error('Không nhận được đường dẫn thanh toán VNPAY từ hệ thống.');
+          this.isProcessing.set(false);
+          return;
+        }
+
+        this.cartService.clearCart();
+        window.location.href = paymentUrl;
+      },
+      error: (err) => {
+        console.error('Create VNPAY payment error:', err);
+        this.toastService.error('Không thể mở cổng thanh toán VNPAY. Vui lòng thử lại sau.');
+        this.isProcessing.set(false);
+      }
+    });
+  }
+
+  private getResponseData(response: any): any {
+    return response?.data || response?.invoice || response;
+  }
+
+  private getInvoiceId(response: any): string {
+    return response?.id || response?.invoiceId || response?.invoiceID || '';
+  }
+
+  private getPaymentUrl(response: any): string {
+    if (typeof response === 'string') return response;
+
+    const data = response?.data || response?.payment || response;
+    if (typeof data === 'string') return data;
+
+    return (
+      data?.paymentUrl ||
+      data?.paymentURL ||
+      data?.vnpayUrl ||
+      data?.vnPayUrl ||
+      data?.vnpayURL ||
+      data?.url ||
+      ''
+    );
   }
 }

@@ -63,13 +63,17 @@ export class AuthService {
               profile.fullname ||
               profile.full_name ||
               currentUser.fullname;
+            const profileAvatar =
+              profile.image ||
+              profile.avatar ||
+              profile.avatarUrl ||
+              profile.imageUrl ||
+              currentUser.avatar;
 
             const updatedUser: User = {
               ...currentUser,
               fullname: realName,
-              avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                realName
-              )}&background=0071bb&color=fff&size=128`,
+              avatar: profileAvatar || this.getFallbackAvatar(realName),
               phone:
                 profile.phone ||
                 profile.phoneNumber ||
@@ -221,5 +225,24 @@ export class AuthService {
     if (user.id) {
       this.refreshProfile(user.id);
     }
+  }
+
+  updateCurrentUserAvatar(avatar: string): void {
+    const currentUser = this._user();
+    if (!currentUser) return;
+
+    const updatedUser: User = {
+      ...currentUser,
+      avatar
+    };
+
+    this._user.set(updatedUser);
+    this.tokenService.setStoredUser(updatedUser);
+  }
+
+  private getFallbackAvatar(name: string): string {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=0071bb&color=fff&size=128`;
   }
 }

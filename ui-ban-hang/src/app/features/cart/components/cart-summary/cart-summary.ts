@@ -11,13 +11,25 @@ import { CommonModule } from '@angular/common';
         <label>Phương thức thanh toán</label>
         <div class="method-options">
           <label class="option" [class.active]="paymentMethod === 'COD'">
-            <input type="radio" name="payment" value="COD" [checked]="paymentMethod === 'COD'" (change)="onPaymentMethodChange.emit('COD')">
-            <i class="ph ph-money"></i> COD (Thanh toán khi nhận hàng)
+            <input
+              type="radio"
+              name="payment"
+              value="COD"
+              [checked]="paymentMethod === 'COD'"
+              (change)="onPaymentMethodChange.emit('COD')">
+            <i class="ph ph-money"></i>
+            COD (Thanh toán khi nhận hàng)
           </label>
-          <label class="option disabled">
-            <input type="radio" name="payment" value="Bank" disabled>
-            <i class="ph ph-bank"></i> Chuyển khoản ngân hàng
-            <span class="coming-soon">Coming Soon</span>
+
+          <label class="option" [class.active]="paymentMethod === 'VNPAY'">
+            <input
+              type="radio"
+              name="payment"
+              value="VNPAY"
+              [checked]="paymentMethod === 'VNPAY'"
+              (change)="onPaymentMethodChange.emit('VNPAY')">
+            <i class="ph ph-bank"></i>
+            Chuyển khoản qua VNPAY
           </label>
         </div>
       </div>
@@ -38,9 +50,9 @@ import { CommonModule } from '@angular/common';
         </div>
       </div>
 
-      <button 
-        class="checkout-btn" 
-        (click)="onCheckout.emit()" 
+      <button
+        class="checkout-btn"
+        (click)="onCheckout.emit()"
         [disabled]="isProcessing"
       >
         {{ isProcessing ? 'ĐANG XỬ LÝ...' : 'XÁC NHẬN ĐẶT HÀNG' }}
@@ -64,27 +76,19 @@ import { CommonModule } from '@angular/common';
             gap: 10px;
             cursor: pointer;
             transition: all 0.2s;
-            
-            &.active { border-color: #0071bb; background: #f0f7ff; font-weight: 600; }
-            
-            &.disabled {
-              background: #f9f9f9;
-              color: #aaa;
-              cursor: not-allowed;
-              border-color: #eee;
-              position: relative;
-              
-              .coming-soon {
-                margin-left: auto;
-                background: #64748b;
-                color: #fff;
-                font-size: 10px;
-                padding: 2px 8px;
-                border-radius: 4px;
-                font-weight: 700;
-                text-transform: uppercase;
-              }
+
+            &:hover {
+              border-color: #0071bb;
+              background: #f8fbff;
             }
+
+            &.active {
+              border-color: #0071bb;
+              background: #f0f7ff;
+              font-weight: 600;
+              color: #0f172a;
+            }
+
             input { width: auto; }
           }
         }

@@ -90,6 +90,7 @@
 
         i { font-size: 20px; }
         &:hover { background: #f1f5f9; color: #0f172a; }
+        &.active { background: #ffffff; color: #0066cc; }
         &.logout { color: #475569; }
       }
     }

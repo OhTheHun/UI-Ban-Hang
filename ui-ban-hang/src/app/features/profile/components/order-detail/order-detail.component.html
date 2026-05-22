@@ -11,7 +11,6 @@
     </header>
 
     <div class="modal-body">
-      <!-- 🕒 Professional Timeline -->
       <div class="order-timeline">
         @for (step of getTimelineSteps(); track step.label) {
           <div class="timeline-step" [class]="step.status">
@@ -59,14 +58,14 @@
                 </td>
                 <td class="qty">×{{ item.quantity }}</td>
                 <td class="price-info">
-                  @if (item.discountPrice > 0) {
-                    <span class="original">{{ item.price | number }}đ</span>
-                    <span class="current">{{ (item.price - item.discountPrice) | number }}đ</span>
+                  @if (hasDiscount(item)) {
+                    <span class="original">{{ getOriginalPrice(item) | number }}đ</span>
+                    <span class="current">{{ getUnitPrice(item) | number }}đ</span>
                   } @else {
-                    <span class="current">{{ item.price | number }}đ</span>
+                    <span class="current">{{ getUnitPrice(item) | number }}đ</span>
                   }
                 </td>
-                <td class="total-price">{{ item.total | number }}đ</td>
+                <td class="total-price">{{ getLineTotal(item) | number }}đ</td>
               </tr>
             }
           </tbody>
@@ -77,7 +76,7 @@
         <div class="total-box">
           <div class="row">
             <span>Tạm tính:</span>
-            <span>{{ order.totalAmount | number }}đ</span>
+            <span>{{ getSubtotal() | number }}đ</span>
           </div>
           <div class="row">
             <span>Phí vận chuyển:</span>
@@ -85,7 +84,7 @@
           </div>
           <div class="row final">
             <label>Tổng thanh toán:</label>
-            <span class="amount">{{ order.totalAmount | number }}đ</span>
+            <span class="amount">{{ getSubtotal() | number }}đ</span>
           </div>
         </div>
       </div>

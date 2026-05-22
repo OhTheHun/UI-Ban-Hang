@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, computed, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
@@ -23,6 +23,7 @@ import { CancelOrderPopupComponent } from './components/cancel-order-popup/cance
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     ProfileInfoComponent,
     OrderListComponent,
     OrderDetailComponent,
@@ -38,18 +39,29 @@ export class ProfileComponent implements OnInit {
 
   public readonly userProfile = signal<UserProfileResponse | null>(null);
   public readonly isLoadingProfile = signal<boolean>(false);
+  public readonly isUploadingAvatar = signal<boolean>(false);
+  public readonly avatarPreviewUrl = signal<string>('');
+  public readonly isChangingPassword = signal<boolean>(false);
 
   public readonly orders = signal<OrderSummary[]>([]);
   public readonly isLoadingOrders = signal<boolean>(false);
   public readonly selectedOrder = signal<OrderDetail | null>(null);
+  passwordForm: FormGroup;
 
   constructor(
     private authService: AuthService,
     private orderService: OrderService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private toastService: ToastService
-  ) { }
+    private toastService: ToastService,
+    private fb: FormBuilder
+  ) {
+    this.passwordForm = this.fb.group({
+      oldPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmNewPassword: ['', [Validators.required]]
+    });
+  }
 
   ngOnInit(): void {
     const user = this.authUser();
@@ -74,6 +86,10 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (profile) => {
           this.userProfile.set(profile);
+          const avatarUrl = this.getProfileAvatar(profile);
+          if (avatarUrl) {
+            this.authService.updateCurrentUserAvatar(avatarUrl);
+          }
         },
         error: (err) => {
           console.error('Failed to load user profile. Check CORS or Token.', err);
@@ -150,13 +166,20 @@ export class ProfileComponent implements OnInit {
   handleSaveProfile(updatedProfile: UserProfileResponse): void {
     const user = this.authUser();
     if (user?.id) {
+      this.isLoadingProfile.set(true);
       this.userService.updateProfile(user.id.toString(), {
         fullName: updatedProfile.fullName,
         phone: updatedProfile.phone,
         address: updatedProfile.address
-      }).subscribe({
-        next: () => {
-          this.userProfile.set(updatedProfile);
+      })
+      .pipe(finalize(() => this.isLoadingProfile.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.userProfile.set({
+            ...updatedProfile,
+            ...response
+          });
+          this.authService.refreshProfile(user.id.toString());
           this.toastService.success('Cập nhật thông tin thành công!');
         },
         error: (err) => this.toastService.error('Lỗi khi cập nhật thông tin.')
@@ -166,5 +189,120 @@ export class ProfileComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  handleAvatarChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.toastService.warning('Vui lòng chọn file hình ảnh.');
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastService.warning('Ảnh không được vượt quá 5MB.');
+      input.value = '';
+      return;
+    }
+
+    const user = this.authUser();
+    if (!user?.id) {
+      this.toastService.error('Không tìm thấy thông tin tài khoản.');
+      return;
+    }
+
+    this.avatarPreviewUrl.set(URL.createObjectURL(file));
+    this.isUploadingAvatar.set(true);
+
+    this.userService.uploadAvatar(user.id.toString(), file)
+      .pipe(finalize(() => this.isUploadingAvatar.set(false)))
+      .subscribe({
+        next: (response) => {
+          const currentProfile = this.userProfile();
+          const avatarUrl = this.getProfileAvatar(response) || this.avatarPreviewUrl();
+
+          if (currentProfile) {
+            this.userProfile.set({
+              ...currentProfile,
+              image: avatarUrl
+            });
+          }
+
+          this.authService.updateCurrentUserAvatar(avatarUrl);
+          this.toastService.success('Cập nhật ảnh đại diện thành công!');
+        },
+        error: (err) => {
+          console.error('Failed to upload avatar', err);
+          this.avatarPreviewUrl.set('');
+          this.toastService.error('Không thể cập nhật ảnh đại diện.');
+        }
+      });
+  }
+
+  changePassword(): void {
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const { oldPassword, newPassword, confirmNewPassword } =
+      this.passwordForm.getRawValue();
+
+    if (newPassword !== confirmNewPassword) {
+      this.passwordForm.get('confirmNewPassword')?.setErrors({ mismatch: true });
+      return;
+    }
+
+    const user = this.authUser();
+    if (!user?.id || !oldPassword || !newPassword || !confirmNewPassword) {
+      this.toastService.error('Không tìm thấy thông tin tài khoản.');
+      return;
+    }
+
+    this.isChangingPassword.set(true);
+
+    this.userService.changePassword(user.id.toString(), {
+      oldPassword,
+      newPassword,
+      confirmNewPassword
+    })
+      .pipe(finalize(() => this.isChangingPassword.set(false)))
+      .subscribe({
+        next: () => {
+          this.passwordForm.reset();
+          this.toastService.success('Đổi mật khẩu thành công!');
+        },
+        error: (err) => {
+          console.error('Failed to change password', err);
+          this.toastService.error('Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
+        }
+      });
+  }
+
+  getAvatarSrc(): string {
+    if (this.avatarPreviewUrl()) return this.avatarPreviewUrl();
+
+    const profile = this.userProfile();
+    const avatarUrl = profile ? this.getProfileAvatar(profile) : '';
+
+    if (avatarUrl) return avatarUrl;
+
+    const name = profile?.fullName || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0d47a1&color=fff`;
+  }
+
+  private getProfileAvatar(profile: UserProfileResponse): string {
+    return (
+      profile.image ||
+      profile.avatar ||
+      profile.avatarUrl ||
+      profile.imageUrl ||
+      profile.url ||
+      ''
+    );
   }
 }

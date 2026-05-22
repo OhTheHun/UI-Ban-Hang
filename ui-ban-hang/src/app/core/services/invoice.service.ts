@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 
@@ -19,6 +19,11 @@ export interface InvoiceItemRequest {
   total: number;
 }
 
+export interface CreateVnpayPaymentRequest {
+  invoiceId: string;
+  ipAddress: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,5 +36,27 @@ export class InvoiceService {
 
   addInvoiceItems(items: InvoiceItemRequest[]): Observable<any> {
     return this.http.post(this.config.getEndpoint('invoice/add-list'), items);
+  }
+
+  createVnpayPayment(request: CreateVnpayPaymentRequest): Observable<any> {
+    return this.http.post(
+      this.config.getEndpoint('payment/vnpay/create'),
+      request,
+      {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json-patch+json'
+        })
+      }
+    );
+  }
+
+  syncVnpayCallback(queryString: string): Observable<any> {
+    const normalizedQuery = queryString
+      ? queryString.startsWith('?')
+        ? queryString
+        : `?${queryString}`
+      : '';
+
+    return this.http.get(this.config.getEndpoint(`payment/vnpay/callback${normalizedQuery}`));
   }
 }

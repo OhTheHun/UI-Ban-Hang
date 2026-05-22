@@ -1,11 +1,21 @@
 <div class="profile-container">
   <div class="profile-layout">
-    
     <aside class="profile-sidebar">
       <div class="user-summary-card">
         <div class="avatar-container">
-          <img [src]="'https://ui-avatars.com/api/?name=' + (userProfile()?.fullName || 'User') + '&background=0d47a1&color=fff'" alt="User Avatar" class="avatar-img">
+          <img [src]="getAvatarSrc()" alt="User Avatar" class="avatar-img">
           <div class="status-indicator"></div>
+          <label class="avatar-edit-btn" for="profileAvatarInput" [class.loading]="isUploadingAvatar()">
+            <i class="ph ph-camera"></i>
+          </label>
+          <input
+            id="profileAvatarInput"
+            class="avatar-input"
+            type="file"
+            accept="image/*"
+            (change)="handleAvatarChange($event)"
+            [disabled]="isUploadingAvatar()"
+          >
         </div>
         <div class="user-info">
           <h2>{{ userProfile()?.fullName || 'Đang tải...' }}</h2>
@@ -14,21 +24,23 @@
       </div>
 
       <nav class="nav-menu">
-        <button class="nav-item" 
-                [class.active]="activeTab() === 'profile'"
-                (click)="setTab('profile')">
+        <button
+          class="nav-item"
+          [class.active]="activeTab() === 'profile'"
+          (click)="setTab('profile')">
           <i class="ph-fill ph-user-circle"></i>
           Thông tin cá nhân
         </button>
-        <button class="nav-item" 
-                [class.active]="activeTab() === 'orders'"
-                (click)="setTab('orders')">
+        <button
+          class="nav-item"
+          [class.active]="activeTab() === 'orders'"
+          (click)="setTab('orders')">
           <i class="ph-fill ph-shopping-cart-simple"></i>
           Lịch sử đơn hàng
         </button>
-        
+
         <div class="nav-divider"></div>
-        
+
         <button class="nav-item logout-btn" (click)="logout()">
           <i class="ph-bold ph-sign-out"></i>
           Đăng xuất
@@ -38,15 +50,55 @@
 
     <main class="profile-content">
       @if (activeTab() === 'profile') {
-        <app-profile-info 
+        <app-profile-info
           [profile]="userProfile()"
           [isLoading]="isLoadingProfile()"
           (onSave)="handleSaveProfile($event)">
         </app-profile-info>
+
+        <div class="password-card">
+          <div class="password-header">
+            <div>
+              <h3>Đổi mật khẩu</h3>
+              <p>Cập nhật mật khẩu đăng nhập cho tài khoản của bạn.</p>
+            </div>
+            <div class="password-icon">
+              <i class="ph ph-lock-key"></i>
+            </div>
+          </div>
+
+          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+            <label>
+              <span>Mật khẩu hiện tại</span>
+              <input type="password" formControlName="oldPassword" autocomplete="current-password">
+            </label>
+
+            <label>
+              <span>Mật khẩu mới</span>
+              <input type="password" formControlName="newPassword" autocomplete="new-password">
+              @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')) {
+                <small>Mật khẩu mới tối thiểu 6 ký tự.</small>
+              }
+            </label>
+
+            <label>
+              <span>Nhập lại mật khẩu mới</span>
+              <input type="password" formControlName="confirmNewPassword" autocomplete="new-password">
+              @if (passwordForm.get('confirmNewPassword')?.hasError('mismatch')) {
+                <small>Mật khẩu nhập lại không khớp.</small>
+              }
+            </label>
+
+            <button type="submit" [disabled]="passwordForm.invalid || isChangingPassword()">
+              <i class="ph ph-shield-check"></i>
+              <span>{{ isChangingPassword() ? 'Đang lưu...' : 'Cập nhật mật khẩu' }}</span>
+            </button>
+          </form>
+        </div>
       }
 
       @if (activeTab() === 'orders') {
-        <app-order-list 
+        <app-order-list
           [orders]="orders()"
           [isLoading]="isLoadingOrders()"
           (onViewDetail)="viewOrderDetail($event)">
@@ -57,7 +109,7 @@
 </div>
 
 @if (selectedOrder(); as detail) {
-  <app-order-detail 
+  <app-order-detail
     [order]="detail"
     (onClose)="closeDetail()"
     (onCancel)="handleCancelOrder($event)">

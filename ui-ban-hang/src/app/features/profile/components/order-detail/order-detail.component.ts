@@ -25,21 +25,51 @@ export class OrderDetailComponent {
   getStatusLabel(status: string): string {
     const s = status?.toLowerCase() || '';
     const map: Record<string, string> = {
-      'confirmed': 'Đã đặt hàng',
-      'processing': 'Đang xử lý',
-      'delivering': 'Đang giao',
-      'completed': 'Hoàn thành',
-      'cancelled': 'Đã hủy'
+      confirmed: 'Đã đặt hàng',
+      pendingpayment: 'Chờ thanh toán',
+      processing: 'Đang xử lý',
+      delivering: 'Đang giao',
+      completed: 'Hoàn thành',
+      cancelled: 'Đã hủy',
+      canceled: 'Đã hủy'
     };
     return map[s] || status;
   }
 
   canCancel(status: string): boolean {
     const s = status?.toLowerCase() || '';
-    return s === 'confirmed' || s === 'processing';
+    return s === 'confirmed' || s === 'processing' || s === 'pendingpayment';
   }
 
-  // 🕒 Timeline Logic
+  getOriginalPrice(item: { price: number }): number {
+    return Number(item.price) || 0;
+  }
+
+  getDiscountAmount(item: { discountPrice: number }): number {
+    return Math.max(Number(item.discountPrice) || 0, 0);
+  }
+
+  hasDiscount(item: { discountPrice: number }): boolean {
+    return this.getDiscountPrice(item) > 0;
+  }
+
+  getUnitPrice(item: { price: number; discountPrice: number }): number {
+    const discountPrice = this.getDiscountPrice(item);
+    return discountPrice > 0 ? discountPrice : this.getOriginalPrice(item);
+  }
+
+  getDiscountPrice(item: { discountPrice: number }): number {
+    return Math.max(Number(item.discountPrice) || 0, 0);
+  }
+
+  getLineTotal(item: { price: number; discountPrice: number; quantity: number }): number {
+    return this.getUnitPrice(item) * (Number(item.quantity) || 0);
+  }
+
+  getSubtotal(): number {
+    return (this.order?.items || []).reduce((sum, item) => sum + this.getLineTotal(item), 0);
+  }
+
   getTimelineSteps() {
     return [
       { label: 'Đã đặt hàng', status: 'completed', icon: 'ph-check-circle' },
@@ -51,14 +81,15 @@ export class OrderDetailComponent {
 
   private getStepStatus(step: string): 'pending' | 'active' | 'completed' {
     const s = this.order.status.toLowerCase();
-    
-    // Normalize status names (Handle both backend styles)
     let current = s;
+
+    if (s === 'confirmed') current = 'pending';
+    if (s === 'pendingpayment') current = 'pending';
     if (s === 'delivering') current = 'shipping';
     if (s === 'completed') current = 'delivered';
 
-    if (current === 'cancelled') return 'pending';
-    
+    if (current === 'cancelled' || current === 'canceled') return 'pending';
+
     const sequence = ['pending', 'processing', 'shipping', 'delivered'];
     const currentIndex = sequence.indexOf(current);
     const stepIndex = sequence.indexOf(step);

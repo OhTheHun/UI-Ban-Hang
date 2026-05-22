@@ -8,7 +8,7 @@ export const customerGuard: CanActivateFn = (route, state) => {
   const user = authService.currentUser();
 
   if (user) {
-    const managementRoles = ['Admin', 'Seller', 'WareHouseManager'];
+    const managementRoles = ['Admin', 'Seller', 'WareHouseManager', 'HR'];
     if (managementRoles.includes(user.role)) {
       // Redirect admins to admin dashboard
       return router.createUrlTree(['/Operations']);

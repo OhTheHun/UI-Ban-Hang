@@ -21,6 +21,22 @@ export interface ProductAdmin {
   status: number;
 }
 
+export interface ProductMutationRequest {
+  id?: string;
+  categoryId: string;
+  supplierId: string;
+  donViTinhId: string;
+  productName: string;
+  price: number;
+  discountPrice: number;
+  cost: number;
+  sku: string;
+  description?: string;
+  imageUrl?: string;
+  imageFile?: File | null;
+  status: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -38,26 +54,86 @@ export class ProductAdminService {
 
     return this.http.get<any>(this.config.getEndpoint('admin/product/list'), { params: httpParams }).pipe(
       map((res: any) => {
-        if (Array.isArray(res)) return res;
-        if (res && Array.isArray(res.data)) return res.data;
-        if (res && Array.isArray(res.products)) return res.products; // Just in case
-        return [];
+        const products = Array.isArray(res)
+          ? res
+          : res?.data || res?.products || [];
+
+        return Array.isArray(products)
+          ? products.map((product) => this.normalizeProduct(product))
+          : [];
       })
     );
   }
 
 
 
-  addProduct(product: Partial<ProductAdmin>): Observable<any> {
-    return this.http.post(this.config.getEndpoint('product/create'), product);
+  addProduct(product: ProductMutationRequest): Observable<any> {
+    return this.http.post(
+      this.config.getEndpoint('product/create'),
+      this.buildProductFormData(product)
+    );
   }
 
-  updateProduct(product: Partial<ProductAdmin>): Observable<any> {
-    return this.http.put(this.config.getEndpoint('product/update'), product);
+  updateProduct(product: ProductMutationRequest): Observable<any> {
+    return this.http.put(
+      this.config.getEndpoint('product/update'),
+      this.buildProductFormData(product, true)
+    );
   }
 
   deleteProduct(productId: string): Observable<any> {
     return this.http.delete(this.config.getEndpoint(`product/delete/${productId}`));
   }
-}
 
+  private buildProductFormData(product: ProductMutationRequest, includeId = false): FormData {
+    const formData = new FormData();
+
+    if (includeId && product.id) {
+      formData.append('Id', product.id);
+    }
+
+    formData.append('CategoryId', product.categoryId);
+    formData.append('SupplierId', product.supplierId);
+    formData.append('DonViTinhId', product.donViTinhId);
+    formData.append('ProductName', product.productName);
+    formData.append('Price', String(product.price ?? 0));
+    formData.append('DiscountPrice', String(product.discountPrice ?? 0));
+    formData.append('Cost', String(product.cost ?? 0));
+    formData.append('SKU', product.sku);
+    formData.append('Description', product.description ?? '');
+    formData.append('Image_Url', product.imageUrl ?? '');
+    formData.append('Status', String(product.status ?? 0));
+
+    if (product.imageFile) {
+      formData.append('ImageFile', product.imageFile);
+    }
+
+    return formData;
+  }
+
+  private normalizeProduct(product: any): ProductAdmin {
+    return {
+      ...product,
+      id: product.id || product.Id,
+      imageUrl:
+        product.imageUrl ||
+        product.image_Url ||
+        product.Image_Url ||
+        product.imageURL ||
+        '',
+      productName: product.productName || product.ProductName || '',
+      sku: product.sku || product.SKU || '',
+      categoryId: product.categoryId || product.CategoryId || '',
+      supplierId: product.supplierId || product.SupplierId || '',
+      supplierName: product.supplierName || product.SupplierName || '',
+      unitName: product.unitName || product.UnitName || '',
+      donViTinhId: product.donViTinhId || product.DonViTinhId || '',
+      price: product.price ?? product.Price ?? 0,
+      discountPrice: product.discountPrice ?? product.DiscountPrice ?? 0,
+      cost: product.cost ?? product.Cost ?? 0,
+      description: product.description || product.Description || '',
+      stockQuantity: product.stockQuantity ?? product.StockQuantity ?? 0,
+      status: product.status ?? product.Status ?? 0
+    };
+  }
+}

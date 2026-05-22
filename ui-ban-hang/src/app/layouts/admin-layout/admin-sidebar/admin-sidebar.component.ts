@@ -53,7 +53,7 @@ export class AdminSidebarComponent {
   });
 
   canSeeUsers = computed(() => {
-    return this.role() === 'Admin';
+    return ['Admin', 'HR'].includes(this.role() ?? '');
   });
 
   canSeeDashboard = computed(() => {

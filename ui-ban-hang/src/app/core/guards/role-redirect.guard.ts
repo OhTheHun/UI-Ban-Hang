@@ -6,6 +6,7 @@ const ROLE_DEFAULT_ROUTES: Record<string, string> = {
   Admin: '/Operations/dashboard',
   Seller: '/Operations/approvals',
   WareHouseManager: '/Operations/import',
+  HR: '/Operations/staff',
 };
 
 export const roleRedirectGuard: CanActivateFn = () => {

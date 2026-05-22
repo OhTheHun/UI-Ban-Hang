@@ -1,0 +1,23 @@
+<section class="payment-result">
+  <div class="result-card" [class.success]="isSuccess()" [class.failed]="!isSuccess()">
+    <div class="result-icon">
+      <i class="ph" [ngClass]="isSuccess() ? 'ph-check-circle' : 'ph-warning-circle'"></i>
+    </div>
+
+    <p class="eyebrow">VNPAY</p>
+    <h1>{{ isSuccess() ? 'Thanh toán thành công' : 'Thanh toán cần kiểm tra' }}</h1>
+    <p class="message">{{ message() }}</p>
+
+    @if (invoiceId()) {
+      <div class="invoice-code">
+        <span>Mã đơn hàng</span>
+        <strong>{{ invoiceId() }}</strong>
+      </div>
+    }
+
+    <div class="actions">
+      <a routerLink="/home" class="btn-primary">Về trang chủ</a>
+      <a routerLink="/profile" [queryParams]="{ tab: 'orders' }" class="btn-outline">Xem đơn hàng</a>
+    </div>
+  </div>
+</section>

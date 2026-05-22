@@ -73,7 +73,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (product of filteredProducts(); track product.id) {
+          @for (product of paginatedProducts(); track product.id) {
             <tr>
               <td class="checkbox-col"><input type="checkbox"></td>
               <td>
@@ -119,11 +119,24 @@
     </div>
 
     <div class="pagination-footer">
-      <div class="info">Hiển thị <strong>{{ filteredProducts().length }}</strong> kết quả</div>
+      <div class="info">
+        Hiển thị <strong>{{ visibleFrom() }}-{{ visibleTo() }}</strong> / {{ filteredProducts().length }} kết quả
+      </div>
       <div class="pagination">
-        <button disabled><i class="ph ph-caret-left"></i></button>
-        <button class="active">1</button>
-        <button disabled><i class="ph ph-caret-right"></i></button>
+        <button type="button" (click)="previousPage()" [disabled]="currentPage() === 1">
+          <i class="ph ph-caret-left"></i>
+        </button>
+        @for (page of pageNumbers(); track page) {
+          <button
+            type="button"
+            [class.active]="currentPage() === page"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        }
+        <button type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+          <i class="ph ph-caret-right"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -283,10 +296,42 @@
           </div>
           <div class="form-grid">
             <div class="form-group full">
-              <label>URL Hình ảnh</label>
+              <label>Hình ảnh sản phẩm</label>
+              <div class="image-upload-field">
+                <div class="image-preview">
+                  @if (productImagePreview()) {
+                    <img [src]="productImagePreview()" alt="Product preview">
+                  } @else {
+                    <i class="ph ph-image-square"></i>
+                  }
+                </div>
+
+                <div class="image-upload-actions">
+                  <label class="btn-upload" for="productImageInput">
+                    <i class="ph ph-upload-simple"></i>
+                    <span>{{ selectedProductImageFile() ? 'Đổi ảnh' : 'Tải ảnh lên' }}</span>
+                  </label>
+                  <button type="button" class="btn-remove-image" *ngIf="productImagePreview()" (click)="removeProductImage()">
+                    <i class="ph ph-trash"></i>
+                    Xóa ảnh
+                  </button>
+                  <input
+                    id="productImageInput"
+                    type="file"
+                    accept="image/*"
+                    (change)="onProductImageSelected($event)"
+                    [disabled]="isSavingProduct()"
+                  >
+                  <small>Chọn ảnh từ máy tính. API create/update sẽ nhận ImageFile và lưu Image_Url từ Cloudinary.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group full">
+              <label>Image_Url</label>
               <div class="input-with-icon">
                 <i class="ph ph-link"></i>
-                <input type="text" formControlName="imageUrl" placeholder="https://...">
+                <input type="text" formControlName="imageUrl" placeholder="URL Cloudinary hiện có" readonly>
               </div>
             </div>
 
@@ -300,9 +345,9 @@
       
       <div class="modal-footer">
         <button type="button" class="btn-outline" (click)="closeAddModal()">Hủy</button>
-        <button type="submit" class="btn-primary" [disabled]="addProductForm.invalid">
+        <button type="submit" class="btn-primary" [disabled]="addProductForm.invalid || isSavingProduct()">
           <i class="ph ph-check-circle"></i>
-          Lưu sản phẩm
+          {{ isSavingProduct() ? 'Đang lưu...' : 'Lưu sản phẩm' }}
         </button>
       </div>
     </form>
