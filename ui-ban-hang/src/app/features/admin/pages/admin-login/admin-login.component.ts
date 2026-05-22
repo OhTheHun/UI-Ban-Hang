@@ -47,7 +47,7 @@ export class AdminLoginComponent {
             this.router.navigate(['/Operations/dashboard']);
           }
           else if (user.role === 'Seller') {
-            this.router.navigate(['/Operations/products']);
+            this.router.navigate(['/Operations/approvals']);
           }
           else if (user.role === 'WareHouseManager') {
             this.router.navigate(['/Operations/products']);
