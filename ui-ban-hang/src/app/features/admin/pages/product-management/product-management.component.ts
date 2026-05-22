@@ -55,13 +55,13 @@ export class ProductManagementComponent implements OnInit {
   ) {
     this.addProductForm = this.fb.group({
       productName: ['', Validators.required],
-      sku: [''],
+      sku: ['', Validators.required],
       categoryId: ['', Validators.required],
-      supplierId: [''],
+      supplierId: ['', Validators.required],
       donViTinhId: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
-      discountPrice: [0],
-      cost: [0],
+      discountPrice: [0, [Validators.min(0)]],
+      cost: [0, [Validators.required, Validators.min(0)]],
       description: [''],
       imageUrl: [''],
       status: [2] // Default Active (based on user info: Active = 2)

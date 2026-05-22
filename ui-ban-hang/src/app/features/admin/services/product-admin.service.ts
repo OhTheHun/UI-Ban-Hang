@@ -94,14 +94,15 @@ export class ProductAdminService {
 
     formData.append('ProductName', product.productName);
     formData.append('Description', product.description ?? '');
+    formData.append('SKU', product.sku ?? '');
     formData.append('Price', String(product.price ?? 0));
+    formData.append('DiscountPrice', String(product.discountPrice ?? 0));
+    formData.append('Cost', String(product.cost ?? 0));
     formData.append('CategoryId', product.categoryId);
+    formData.append('SupplierId', product.supplierId);
     formData.append('DonViTinhId', product.donViTinhId);
     formData.append('Status', String(product.status ?? 0));
-
-    if (includeId) {
-      formData.append('Image_Url', product.imageUrl ?? '');
-    }
+    formData.append('Image_Url', product.imageUrl ?? '');
 
     if (product.imageFile) {
       formData.append('ImageFile', product.imageFile);
