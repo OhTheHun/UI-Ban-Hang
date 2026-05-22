@@ -76,9 +76,8 @@ export class InvoiceAdminService {
     return this.http.put(this.config.getEndpoint(`invoice/confirm-payment/${invoiceId}`), {}, { params });
   }
 
-  cancelInvoice(invoiceId: string, userId: string): Observable<any> {
+  cancelInvoice(invoiceId: string, userId: string, reason = ''): Observable<any> {
     const params = new HttpParams().set('userId', userId);
-    return this.http.put(this.config.getEndpoint(`invoice/cancel/${invoiceId}`), {}, { params });
+    return this.http.put(this.config.getEndpoint(`invoice/cancel/${invoiceId}`), { reason }, { params });
   }
 }
-

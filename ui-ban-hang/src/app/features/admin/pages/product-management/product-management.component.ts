@@ -31,7 +31,8 @@ export class ProductManagementComponent implements OnInit {
   isSavingProduct = signal(false);
   productImagePreview = signal('');
   selectedProductImageFile = signal<File | null>(null);
-  isAdmin = computed(() => this.authService.currentUser()?.role === 'WareHouseManager');
+  canManageProducts = computed(() => this.authService.currentUser()?.role === 'WareHouseManager');
+  isAdmin = this.canManageProducts;
 
   // Modals
   selectedProduct = signal<ProductAdmin | null>(null);

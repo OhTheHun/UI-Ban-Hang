@@ -112,7 +112,19 @@ export class OrderApprovalComponent implements OnInit {
       });
   }
 
-  updateStatus(newStatus: number): void {
+  openRejectPopup(): void {
+    this.rejectReason = '';
+    this.showRejectInput.set(true);
+  }
+
+  closeRejectPopup(): void {
+    if (this.isUpdating) return;
+
+    this.rejectReason = '';
+    this.showRejectInput.set(false);
+  }
+
+  updateStatus(newStatus: number, cancelReason = ''): void {
 
     const order = this.selectedOrder();
     const userId = this.authService.currentUser()?.id || '';
@@ -126,13 +138,18 @@ export class OrderApprovalComponent implements OnInit {
       return;
     }
 
+    if (newStatus === 4 && !cancelReason.trim()) {
+      this.openRejectPopup();
+      return;
+    }
+
     this.isUpdating = true;
 
     const apiMap: Record<number, any> = {
       1: this.invoiceService.updateProcessing(order.id, userId),
       2: this.invoiceService.updateDelivering(order.id, userId),
       3: this.invoiceService.updateCompleted(order.id, userId),
-      4: this.invoiceService.cancelInvoice(order.id, userId)
+      4: this.invoiceService.cancelInvoice(order.id, userId, cancelReason.trim())
     };
 
     const apiCall$ = apiMap[newStatus];
@@ -151,6 +168,9 @@ export class OrderApprovalComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toastService.success('Cập nhật trạng thái đơn hàng thành công');
+
+          this.showRejectInput.set(false);
+          this.rejectReason = '';
 
           const updatedOrder: InvoiceApprovalDTO = {
             ...order,
@@ -184,7 +204,7 @@ export class OrderApprovalComponent implements OnInit {
 
     this.showRejectInput.set(false);
 
-    this.updateStatus(4);
+    this.updateStatus(4, this.rejectReason);
   }
 
   getItemUnitPrice(item: { price: number; discountPrice?: number }): number {

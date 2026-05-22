@@ -29,6 +29,44 @@
         </button>
       </div>
 
+@if (showRejectInput()) {
+  <div class="reject-modal-backdrop" (click)="closeRejectPopup()">
+    <div class="reject-modal" (click)="$event.stopPropagation()">
+      <div class="reject-modal-icon">
+        <i class="ph ph-warning-circle"></i>
+      </div>
+
+      <div class="reject-modal-content">
+        <h3>Từ chối đơn hàng</h3>
+        <p>Vui lòng nhập lý do từ chối để lưu lại lịch sử xử lý đơn hàng.</p>
+
+        <label>
+          <span>Lý do từ chối</span>
+          <textarea
+            [(ngModel)]="rejectReason"
+            rows="4"
+            maxlength="300"
+            placeholder="Nhập lý do từ chối đơn hàng...">
+          </textarea>
+        </label>
+
+        <div class="reason-footer">
+          <span class="error-message" *ngIf="!rejectReason.trim()">Bắt buộc nhập lý do.</span>
+          <span class="char-count">{{ rejectReason.length }}/300</span>
+        </div>
+      </div>
+
+      <div class="reject-modal-actions">
+        <button type="button" class="btn-ghost" (click)="closeRejectPopup()" [disabled]="isUpdating">Quay lại</button>
+        <button type="button" class="btn-confirm-reject" (click)="confirmReject()" [disabled]="isUpdating">
+          <span class="spinner-small" *ngIf="isUpdating"></span>
+          <span *ngIf="!isUpdating">Đồng ý từ chối</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
       <div class="order-cards">
         @if (isLoading()) {
         <div class="loading-overlay">
@@ -125,7 +163,7 @@
 
           @if ([0, 1, 2].includes(selectedOrder()?.status!) && !showRejectInput()) {
           <div class="detail-footer" [class.disabled]="isUpdating">
-            <button *ngIf="selectedOrder()?.status === 0" (click)="updateStatus(4)"
+            <button *ngIf="selectedOrder()?.status === 0" (click)="openRejectPopup()"
               class="btn-outline-danger" [disabled]="isUpdating">Từ chối</button>
 
             <button *ngIf="selectedOrder()?.status === 0" (click)="updateStatus(1)" class="btn-primary"

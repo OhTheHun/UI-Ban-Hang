@@ -33,7 +33,7 @@ export class AdminSidebarComponent {
   });
 
   canSeeProducts = computed(() => {
-    return ['WareHouseManager'].includes(this.role() ?? '');
+    return ['Seller', 'WareHouseManager'].includes(this.role() ?? '');
   });
 
   canSeeSuppliers = computed(() => {
