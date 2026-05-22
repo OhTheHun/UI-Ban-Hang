@@ -41,6 +41,5 @@ export class SubNavbarComponent {
   }
 
   onCategorySelected(category: any) {
-    console.log('Category selected:', category);
   }
 }

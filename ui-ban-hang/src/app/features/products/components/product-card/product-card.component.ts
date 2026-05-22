@@ -37,6 +37,5 @@ export class ProductCardComponent {
   }
 
   toggleFavorite() {
-    console.log('Toggle favorite', this.product);
   }
 }

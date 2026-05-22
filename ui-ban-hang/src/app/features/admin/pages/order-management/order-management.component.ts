@@ -37,7 +37,6 @@ export class OrderManagementComponent {
         this.cdr.detectChanges(); // Force update if needed
       },
       error: (err) => {
-        console.error('Failed to load invoices:', err);
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -67,7 +66,6 @@ export class OrderManagementComponent {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Failed to filter invoices:', err);
         this.loading = false;
         this.cdr.detectChanges();
       }

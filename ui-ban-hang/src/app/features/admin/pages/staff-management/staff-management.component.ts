@@ -224,7 +224,6 @@ export class StaffManagementComponent implements OnInit {
         },
         error: (err) => {
           this.toastService.error('Lỗi khi cập nhật nhân viên');
-          console.error('Update staff error:', err);
           this.isLoading.set(false);
         }
       });
@@ -253,7 +252,6 @@ export class StaffManagementComponent implements OnInit {
       },
       error: (err) => {
         this.toastService.error('Lỗi khi thêm nhân viên');
-        console.error('Create staff error:', err);
         this.isLoading.set(false);
       }
     });
@@ -278,7 +276,6 @@ export class StaffManagementComponent implements OnInit {
       },
       error: (err) => {
         this.toastService.error('Lỗi khi xóa nhân viên');
-        console.error('Delete staff error:', err);
       }
     });
   }
@@ -327,7 +324,6 @@ export class StaffManagementComponent implements OnInit {
       },
       error: (err) => {
         this.toastService.error('Không thể cập nhật trạng thái khách hàng');
-        console.error('Update customer status error:', err);
         this.updatingCustomerStatusId.set(null);
       }
     });

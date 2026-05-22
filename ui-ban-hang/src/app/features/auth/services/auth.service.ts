@@ -91,9 +91,7 @@ export class AuthService {
           }
         },
 
-        error: (err) => {
-          console.error('Failed to fetch profile:', err);
-        }
+        error: () => {}
       });
   }
 
@@ -116,8 +114,6 @@ export class AuthService {
               ? 'Server is taking too long to respond. Please try again.'
               : 'Login failed. Please check your connection or credentials.';
 
-          console.error('Login failed:', errorMsg);
-
           return throwError(() => new Error(errorMsg));
         })
       );
@@ -139,8 +135,6 @@ export class AuthService {
             error.name === 'TimeoutError'
               ? 'Registration timed out. Please try again later.'
               : 'Registration failed.';
-
-          console.error('Registration failed:', errorMsg);
 
           return throwError(() => new Error(errorMsg));
         })
@@ -176,8 +170,6 @@ export class AuthService {
   ): void {
 
     const authResult = res?.data || res?.user || res;
-
-    console.log('LOGIN RESPONSE:', authResult);
 
     if (authResult.accessToken) {
       this.tokenService.setToken(authResult.accessToken);

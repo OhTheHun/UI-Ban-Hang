@@ -93,7 +93,6 @@ export class OperationAccountComponent {
         },
         error: (err) => {
           this.toastService.error('Không thể đổi mật khẩu');
-          console.error('Change password error:', err);
           this.isChangingPassword.set(false);
         }
       });
@@ -119,7 +118,6 @@ export class OperationAccountComponent {
       },
       error: (err) => {
         this.toastService.error('Không thể tải ảnh lên');
-        console.error('Upload avatar error:', err);
         this.isUploading.set(false);
       }
     });

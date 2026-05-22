@@ -52,7 +52,6 @@ export class ImportManagementComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading.set(false);
-        console.error('Error loading imports:', err);
       }
     });
   }
@@ -115,7 +114,6 @@ export class ImportManagementComponent implements OnInit {
       },
       error: (err) => {
         this.toastService.error('Không thể duyệt phiếu nhập kho');
-        console.error('Error approving import:', err);
         this.approvingImportId.set(null);
       }
     });
@@ -135,7 +133,6 @@ export class ImportManagementComponent implements OnInit {
       },
       error: (err) => {
         this.toastService.error('Lỗi khi tạo phiếu nhập');
-        console.error('Error creating import:', err);
       }
     });
   }

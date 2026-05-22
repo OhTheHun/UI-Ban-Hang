@@ -92,7 +92,7 @@ export class ProfileComponent implements OnInit {
           }
         },
         error: (err) => {
-          console.error('Failed to load user profile. Check CORS or Token.', err);
+          this.toastService.error('Không thể tải thông tin tài khoản.');
         }
       });
   }
@@ -111,20 +111,17 @@ export class ProfileComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingOrders.set(false)))
       .subscribe({
         next: (data) => this.orders.set(data),
-        error: (err) => console.error('Failed to load orders', err)
+        error: () => this.toastService.error('Không thể tải lịch sử đơn hàng.')
       });
   }
 
   viewOrderDetail(invoiceId: string): void {
-    console.log('Fetching detail for invoice ID:', invoiceId);
     this.orderService.getOrderDetail(invoiceId).subscribe({
       next: (detail) => {
-        console.log('Order detail received:', detail);
         // Inject the invoiceId since the backend detail response doesn't include it
         this.selectedOrder.set({ ...detail, invoiceId });
       },
       error: (err) => {
-        console.error('Failed to load order detail', err);
         this.toastService.error('Không thể tải chi tiết đơn hàng. Vui lòng kiểm tra Console (F12).');
       }
     });
@@ -242,7 +239,6 @@ export class ProfileComponent implements OnInit {
           this.toastService.success('Cập nhật ảnh đại diện thành công!');
         },
         error: (err) => {
-          console.error('Failed to upload avatar', err);
           this.avatarPreviewUrl.set('');
           this.toastService.error('Không thể cập nhật ảnh đại diện.');
         }
@@ -283,7 +279,6 @@ export class ProfileComponent implements OnInit {
           this.toastService.success('Đổi mật khẩu thành công!');
         },
         error: (err) => {
-          console.error('Failed to change password', err);
           this.toastService.error('Không thể đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại.');
         }
       });

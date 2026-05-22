@@ -30,7 +30,6 @@ export class CartService {
     const productId = product.id || product.productId; // Fallback for ID field names
     
     if (!productId) {
-      console.error('CartService: Cannot add product without ID', product);
       return;
     }
 

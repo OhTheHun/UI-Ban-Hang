@@ -254,7 +254,6 @@ export class ProductManagementComponent implements OnInit {
               ? 'Lỗi khi cập nhật sản phẩm'
               : 'Lỗi khi thêm sản phẩm'
           );
-          console.error('Error saving product:', err);
         }
       });
   }
@@ -315,7 +314,6 @@ export class ProductManagementComponent implements OnInit {
         },
         error: (err) => {
           this.toastService.error('Lỗi khi xóa sản phẩm');
-          console.error('Error deleting product:', err);
         }
       });
     }

@@ -72,7 +72,6 @@ export class VnpayReturnComponent implements OnInit {
         this.redirectHomeWhenSuccess();
       },
       error: err => {
-        console.error('Sync VNPAY return error:', err);
         this.isSyncing.set(false);
         this.redirectHomeWhenSuccess();
       }

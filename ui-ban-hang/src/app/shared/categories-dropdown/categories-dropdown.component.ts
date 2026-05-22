@@ -39,7 +39,7 @@ export class CategoriesDropdownComponent implements OnInit {
           icon: '' // Unused now
         }));
       },
-      error: (err) => console.error('Failed to load categories', err)
+      error: () => {}
     });
   }
 

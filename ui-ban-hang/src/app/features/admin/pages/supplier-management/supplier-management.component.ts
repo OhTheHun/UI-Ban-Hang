@@ -27,13 +27,11 @@ export class SupplierManagementComponent implements OnInit {
     this.isLoading = true;
     this.supplierService.getSuppliers().subscribe({
       next: (res: any) => {
-        console.log('Supplier API Response:', res);
         this.suppliers = res.suppliers || res.Suppliers || [];
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Supplier API Error:', err);
         this.isLoading = false;
         this.cdr.detectChanges();
       }

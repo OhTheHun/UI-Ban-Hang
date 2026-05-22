@@ -55,7 +55,6 @@ export class OrderApprovalComponent implements OnInit {
           this.isLoading.set(false);
         },
         error: (err) => {
-          console.error('Failed to fetch orders', err);
           this.isLoading.set(false);
         }
       });
@@ -69,7 +68,6 @@ export class OrderApprovalComponent implements OnInit {
             this.historyOrders = (res || []).map(item => this.mapInvoice(item));
           },
           error: (err) => {
-            console.error('Failed to fetch history orders', err);
           }
         });
     }
@@ -83,7 +81,7 @@ export class OrderApprovalComponent implements OnInit {
     this.rejectReason = '';
 
     if (!order?.id) {
-      console.error('Order ID is undefined!', order);
+      this.toastService.error('Không tìm thấy mã đơn hàng.');
       return;
     }
 
@@ -107,7 +105,6 @@ export class OrderApprovalComponent implements OnInit {
           );
         },
         error: (err) => {
-          console.error('Failed to fetch order detail', err);
         }
       });
   }
@@ -190,7 +187,6 @@ export class OrderApprovalComponent implements OnInit {
         },
         error: (err: any) => {
           this.toastService.error('Cập nhật thất bại. Vui lòng thử lại.');
-          console.error('Update status error:', err);
         }
       });
   }
@@ -198,7 +194,7 @@ export class OrderApprovalComponent implements OnInit {
   confirmReject(): void {
 
     if (!this.rejectReason.trim()) {
-      alert('Vui lòng nhập lý do từ chối');
+      this.toastService.warning('Vui lòng nhập lý do từ chối đơn hàng.');
       return;
     }
 

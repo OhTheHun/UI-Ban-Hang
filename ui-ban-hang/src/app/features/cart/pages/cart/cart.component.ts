@@ -138,14 +138,12 @@ export class CartComponent implements OnInit {
             this.router.navigate(['/']);
           },
           error: (err) => {
-            console.error('Add items error:', err);
             this.toastService.error('Có lỗi xảy ra khi thêm sản phẩm vào hóa đơn.');
             this.isProcessing.set(false);
           }
         });
       },
       error: (err) => {
-        console.error('Create invoice error:', err);
         this.toastService.error('Không thể tạo hóa đơn. Vui lòng thử lại sau.');
         this.isProcessing.set(false);
       }
@@ -170,7 +168,6 @@ export class CartComponent implements OnInit {
         window.location.href = paymentUrl;
       },
       error: (err) => {
-        console.error('Create VNPAY payment error:', err);
         this.toastService.error('Không thể mở cổng thanh toán VNPAY. Vui lòng thử lại sau.');
         this.isProcessing.set(false);
       }
