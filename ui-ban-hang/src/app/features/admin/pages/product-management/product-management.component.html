@@ -19,7 +19,7 @@
       <div class="toolbar-left">
         <div class="search-box">
           <i class="ph ph-magnifying-glass"></i>
-          <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Tìm kiếm theo tên hoặc SKU...">
+          <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Tìm kiếm theo tên sản phẩm...">
         </div>
         <div class="filter-dropdown">
           <i class="ph ph-funnel"></i>
@@ -64,7 +64,7 @@
           <tr>
             <th class="checkbox-col"><input type="checkbox"></th>
             <th>SẢN PHẨM</th>
-            <th>MÃ SKU</th>
+            <th>Mã SP</th>
             <th>DANH MỤC</th>
             <th>GIÁ BÁN</th>
             <th>KHO</th>
@@ -84,7 +84,7 @@
                   </div>
                   <div class="info">
                     <div class="name">{{ product.productName }}</div>
-                    <div class="supplier">{{ product.supplierName }}</div>
+                    <div class="supplier">{{ product.unitName }}</div>
                   </div>
                 </div>
               </td>
@@ -92,7 +92,6 @@
               <td>{{ getCategoryName(product.categoryId) }}</td>
               <td class="price">
                 <div class="main">{{ product.price | number:'1.0-0' }} đ</div>
-                <div class="cost" *ngIf="product.cost">Vốn: {{ product.cost | number:'1.0-0' }} đ</div>
               </td>
               <td class="stock" [class.low]="product.stockQuantity < 10">{{ product.stockQuantity }} {{ product.unitName }}</td>
               <td>
@@ -185,7 +184,7 @@
               </div>
             </div>
             
-            <div class="form-group">
+            <div class="form-group" *ngIf="false">
               <label>Mã SKU *</label>
               <div class="input-with-icon">
                 <i class="ph ph-barcode"></i>
@@ -228,7 +227,7 @@
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" *ngIf="false">
               <label>Nhà cung cấp *</label>
               <div class="input-with-icon">
                 <i class="ph ph-truck"></i>
@@ -258,7 +257,7 @@
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" *ngIf="false">
               <label>Giá khuyến mãi (đ)</label>
               <div class="input-with-icon">
                 <i class="ph ph-receipt"></i>
@@ -266,7 +265,7 @@
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" *ngIf="false">
               <label>Giá vốn (đ) *</label>
               <div class="input-with-icon">
                 <i class="ph ph-hand-coins"></i>
@@ -373,7 +372,7 @@
         <div class="detail-info">
           <div class="badge-row">
             <span class="status-badge" [ngClass]="getStatusClass(product.status)">{{ getStatusLabel(product.status) }}</span>
-            <span class="sku">#{{ product.sku }}</span>
+            <span class="sku">#{{ product.sku || product.id }}</span>
           </div>
           <h4>{{ product.productName }}</h4>
           
@@ -392,14 +391,6 @@
             <div class="item">
               <span class="lbl">Danh mục:</span>
               <span class="val">{{ getCategoryName(product.categoryId) }}</span>
-            </div>
-            <div class="item">
-              <span class="lbl">Nhà cung cấp:</span>
-              <span class="val">{{ product.supplierName }}</span>
-            </div>
-            <div class="item">
-              <span class="lbl">Giá vốn:</span>
-              <span class="val">{{ product.cost | number }} đ</span>
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ConfigService } from '../../../core/services/config.service';
 import { OrderSummary, OrderDetail } from '../models/order.model';
@@ -32,8 +32,10 @@ export class OrderService {
   /**
    * Cancel an invoice
    * @param invoiceId The invoice ID
+   * @param userId The user who cancels this invoice
    */
-  cancelOrder(invoiceId: string): Observable<any> {
-    return this.http.put(this.config.getEndpoint(`invoice/cancel/${invoiceId}`), {});  
+  cancelOrder(invoiceId: string, userId: string, reason: string): Observable<any> {
+    const params = new HttpParams().set('userId', userId);
+    return this.http.put(this.config.getEndpoint(`invoice/cancel/${invoiceId}`), { reason }, { params });
   }
 }

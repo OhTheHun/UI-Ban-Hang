@@ -53,7 +53,11 @@
     <div class="table-container" [class.loading]="isLoading()">
       <div class="spinner" *ngIf="isLoading()"></div>
 
-      <table class="data-table" *ngIf="!isLoading()">
+      <table
+        class="data-table"
+        [class.staff-table]="currentTab() === 'staff'"
+        [class.customer-table]="currentTab() === 'customer'"
+        *ngIf="!isLoading()">
         <thead *ngIf="currentTab() === 'staff'">
           <tr>
             <th>Nhân viên</th>
@@ -121,6 +125,7 @@
             <th>Tổng chi tiêu</th>
             <th>Đơn gần nhất</th>
             <th>Trạng thái</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
 
@@ -140,18 +145,42 @@
             </td>
             <td>{{ customer.phone || 'N/A' }}</td>
             <td class="address-cell">{{ customer.address || 'N/A' }}</td>
-            <td>{{ customer.totalOrders ?? 0 }}</td>
-            <td>{{ (customer.totalSpent ?? 0) | currency:'VND':'symbol':'1.0-0' }}</td>
-            <td>{{ customer.lastOrderDate ? (customer.lastOrderDate | date:'dd/MM/yyyy') : 'N/A' }}</td>
+            <td>{{ customer.completedOrderCount }}</td>
+            <td>{{ customer.completedOrderTotalAmount | currency:'VND':'symbol':'1.0-0' }}</td>
+            <td>
+              <span *ngIf="customer.lastOrder; else noLastOrder">
+                {{ customer.lastOrder.code }} -
+                {{ customer.lastOrder.createdTime | date:'dd/MM/yyyy' }}
+              </span>
+              <ng-template #noLastOrder>N/A</ng-template>
+            </td>
             <td>
               <span class="status-dot" [class.active]="customer.isActive">
                 {{ customer.isActive ? 'Hoạt động' : 'Chưa hoạt động' }}
               </span>
             </td>
+            <td class="actions-cell">
+              <button
+                class="btn-actions customer-status-btn"
+                type="button"
+                [disabled]="updatingCustomerStatusId() === customer.id"
+                (click)="openCustomerStatusConfirm(customer)">
+                <i class="ph" [ngClass]="customer.isActive ? 'ph-lock-key' : 'ph-lock-key-open'"></i>
+                <span>
+                  {{
+                    updatingCustomerStatusId() === customer.id
+                      ? 'Đang cập nhật'
+                      : customer.isActive
+                        ? 'Khóa'
+                        : 'Mở khóa'
+                  }}
+                </span>
+              </button>
+            </td>
           </tr>
 
           <tr *ngIf="filteredCustomers().length === 0" class="empty-state-tr">
-            <td colspan="7">
+            <td colspan="8">
               <div class="empty-state">
                 <i class="ph ph-users"></i>
                 <p>Không tìm thấy khách hàng nào</p>
@@ -243,9 +272,9 @@
         </div>
 
         <div class="form-group full">
-          <label class="checkbox-label" [class.disabled]="!isEditMode()">
+          <label class="checkbox-label">
             <input type="checkbox" formControlName="isActive">
-            {{ isEditMode() ? 'Tài khoản đang hoạt động' : 'Nhân viên mới mặc định chưa hoạt động' }}
+            Tài khoản đang hoạt động
           </label>
         </div>
       </form>
@@ -271,5 +300,22 @@
   [cancelText]="'Hủy'"
   (onConfirm)="confirmDelete()"
   (onCancel)="showDeleteConfirm.set(false)"
+>
+</app-confirm-modal>
+
+<app-confirm-modal
+  *ngIf="showCustomerStatusConfirm() && customerToUpdateStatus()"
+  [title]="customerToUpdateStatus()?.isActive ? 'Xác nhận khóa tài khoản' : 'Xác nhận mở khóa tài khoản'"
+  [message]="
+    customerToUpdateStatus()?.isActive
+      ? 'Bạn có chắc chắn muốn khóa tài khoản khách hàng ' + customerToUpdateStatus()?.fullName + '?'
+      : 'Bạn có đồng ý mở khóa tài khoản khách hàng ' + customerToUpdateStatus()?.fullName + '?'
+  "
+  [type]="customerToUpdateStatus()?.isActive ? 'danger' : 'success'"
+  [icon]="customerToUpdateStatus()?.isActive ? 'ph ph-lock-key' : 'ph ph-lock-key-open'"
+  [confirmText]="customerToUpdateStatus()?.isActive ? 'Đồng ý khóa' : 'Đồng ý mở khóa'"
+  [cancelText]="'Hủy'"
+  (onConfirm)="confirmCustomerStatusChange()"
+  (onCancel)="closeCustomerStatusConfirm()"
 >
 </app-confirm-modal>

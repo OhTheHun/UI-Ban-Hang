@@ -12,6 +12,7 @@ export interface InvoiceApprovalDTO {
   items: {
     productName: string;
     price: number;
+    discountPrice?: number;
     quantity: number;
   }[];
 }

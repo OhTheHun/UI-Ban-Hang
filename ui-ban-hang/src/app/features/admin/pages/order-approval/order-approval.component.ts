@@ -121,6 +121,11 @@ export class OrderApprovalComponent implements OnInit {
       return;
     }
 
+    if (!userId) {
+      this.toastService.error('Không tìm thấy thông tin tài khoản xử lý đơn.');
+      return;
+    }
+
     this.isUpdating = true;
 
     const apiMap: Record<number, any> = {
@@ -180,6 +185,15 @@ export class OrderApprovalComponent implements OnInit {
     this.showRejectInput.set(false);
 
     this.updateStatus(4);
+  }
+
+  getItemUnitPrice(item: { price: number; discountPrice?: number }): number {
+    const discountPrice = Number(item.discountPrice) || 0;
+    return discountPrice > 0 ? discountPrice : Number(item.price) || 0;
+  }
+
+  getItemLineTotal(item: { price: number; discountPrice?: number; quantity: number }): number {
+    return this.getItemUnitPrice(item) * (Number(item.quantity) || 0);
   }
 
   private mapInvoice(res: any): InvoiceApprovalDTO {

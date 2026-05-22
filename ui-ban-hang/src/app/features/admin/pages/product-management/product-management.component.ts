@@ -31,7 +31,7 @@ export class ProductManagementComponent implements OnInit {
   isSavingProduct = signal(false);
   productImagePreview = signal('');
   selectedProductImageFile = signal<File | null>(null);
-  isAdmin = computed(() => this.authService.currentUser()?.role === 'Admin');
+  isAdmin = computed(() => this.authService.currentUser()?.role === 'WareHouseManager');
 
   // Modals
   selectedProduct = signal<ProductAdmin | null>(null);
@@ -54,13 +54,13 @@ export class ProductManagementComponent implements OnInit {
   ) {
     this.addProductForm = this.fb.group({
       productName: ['', Validators.required],
-      sku: ['', Validators.required],
+      sku: [''],
       categoryId: ['', Validators.required],
-      supplierId: ['', Validators.required],
+      supplierId: [''],
       donViTinhId: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
-      discountPrice: [0, [Validators.required, Validators.min(0)]],
-      cost: [0, [Validators.required, Validators.min(0)]],
+      discountPrice: [0],
+      cost: [0],
       description: [''],
       imageUrl: [''],
       status: [2] // Default Active (based on user info: Active = 2)

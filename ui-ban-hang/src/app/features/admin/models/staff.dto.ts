@@ -25,9 +25,15 @@ export interface CustomerDTO {
   address: string;
   image: string;
   isActive: boolean;
-  totalOrders?: number;
-  totalSpent?: number;
-  lastOrderDate?: string;
+  completedOrderCount: number;
+  completedOrderTotalAmount: number;
+  lastOrder?: {
+    invoiceId: string;
+    code: string;
+    totalAmount: number;
+    status: string;
+    createdTime: string;
+  } | null;
 }
 
 export interface CreateUserRequest {

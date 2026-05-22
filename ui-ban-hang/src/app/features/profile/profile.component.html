@@ -118,7 +118,7 @@
 
 @if (cancelInvoiceId()) {
   <app-cancel-order-popup
-    (onConfirm)="confirmCancelOrder()"
+    (onConfirm)="confirmCancelOrder($event)"
     (onCancel)="closeCancelPopup()">
   </app-cancel-order-popup>
 }

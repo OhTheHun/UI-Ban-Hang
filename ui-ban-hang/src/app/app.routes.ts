@@ -67,7 +67,7 @@ export const routes: Routes = [
         path: 'products',
         canActivate: [roleGuard],
         data: {
-          roles: ['Admin', 'Seller', 'WareHouseManager']
+          roles: ['WareHouseManager']
         },
         loadComponent: () =>
           import('./features/admin/pages/product-management/product-management.component')

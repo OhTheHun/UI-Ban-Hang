@@ -29,6 +29,9 @@ export class StaffManagementComponent implements OnInit {
 
   showDeleteConfirm = signal(false);
   staffToDelete = signal<StaffDTO | null>(null);
+  updatingCustomerStatusId = signal<string | null>(null);
+  showCustomerStatusConfirm = signal(false);
+  customerToUpdateStatus = signal<CustomerDTO | null>(null);
 
   activeDropdownId = signal<string | null>(null);
   dropdownPosition = signal({ top: '0px', left: '0px' });
@@ -150,12 +153,12 @@ export class StaffManagementComponent implements OnInit {
       birthday: '',
       identify: '',
       salary: 0,
-      isActive: false
+      isActive: true
     });
     this.staffForm.get('password')?.setValidators([Validators.required]);
     this.staffForm.get('password')?.updateValueAndValidity();
     this.staffForm.get('email')?.enable();
-    this.staffForm.get('isActive')?.disable();
+    this.staffForm.get('isActive')?.enable();
     this.showAddModal.set(true);
   }
 
@@ -239,12 +242,12 @@ export class StaffManagementComponent implements OnInit {
       birthday: formData.birthday,
       identify: formData.identify,
       salary: Number(formData.salary || 0),
-      isActive: false
+      isActive: formData.isActive
     };
 
     this.userAdminService.createUser(request).subscribe({
       next: () => {
-        this.toastService.success('Thêm nhân viên thành công. Tài khoản đang ở trạng thái chưa hoạt động.');
+        this.toastService.success('Thêm nhân viên thành công.');
         this.loadData();
         this.closeModal();
       },
@@ -276,6 +279,56 @@ export class StaffManagementComponent implements OnInit {
       error: (err) => {
         this.toastService.error('Lỗi khi xóa nhân viên');
         console.error('Delete staff error:', err);
+      }
+    });
+  }
+
+  openCustomerStatusConfirm(customer: CustomerDTO): void {
+    if (!customer?.id || this.updatingCustomerStatusId()) return;
+
+    this.customerToUpdateStatus.set(customer);
+    this.showCustomerStatusConfirm.set(true);
+  }
+
+  closeCustomerStatusConfirm(): void {
+    this.customerToUpdateStatus.set(null);
+    this.showCustomerStatusConfirm.set(false);
+  }
+
+  confirmCustomerStatusChange(): void {
+    const customer = this.customerToUpdateStatus();
+    if (!customer) return;
+    this.toggleCustomerStatus(customer);
+  }
+
+  private toggleCustomerStatus(customer: CustomerDTO): void {
+    if (!customer?.id || this.updatingCustomerStatusId()) return;
+
+    this.updatingCustomerStatusId.set(customer.id);
+    const nextStatus = !customer.isActive;
+
+    this.userAdminService.updateCustomerStatus(customer.id, nextStatus).subscribe({
+      next: () => {
+        this.customerList.update((customers) =>
+          customers.map((item) =>
+            item.id === customer.id
+              ? { ...item, isActive: nextStatus }
+              : item
+          )
+        );
+
+        this.toastService.success(
+          !nextStatus
+            ? 'Đã khóa tài khoản khách hàng'
+            : 'Đã mở khóa tài khoản khách hàng'
+        );
+        this.updatingCustomerStatusId.set(null);
+        this.closeCustomerStatusConfirm();
+      },
+      error: (err) => {
+        this.toastService.error('Không thể cập nhật trạng thái khách hàng');
+        console.error('Update customer status error:', err);
+        this.updatingCustomerStatusId.set(null);
       }
     });
   }

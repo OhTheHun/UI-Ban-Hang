@@ -8,6 +8,7 @@ export interface ImportDetail {
 
 export interface Import {
   id?: string;
+  importId?: string;
   code?: string;
   totalAmount?: number;
   status?: string;
@@ -21,4 +22,5 @@ export interface ImportFilterParams {
   fromDate?: string;
   toDate?: string;
   productName?: string;
+  status?: 'Pending' | 'Success';
 }

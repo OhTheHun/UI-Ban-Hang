@@ -110,7 +110,7 @@
                     <tr>
                       <td>{{ item.productName }}</td>
                       <td>x{{ item.quantity }}</td>
-                      <td>{{ item.price * item.quantity | number }} ₫</td>
+                      <td>{{ getItemLineTotal(item) | number }} ₫</td>
                     </tr>
                     }
                   </tbody>
@@ -125,7 +125,7 @@
 
           @if ([0, 1, 2].includes(selectedOrder()?.status!) && !showRejectInput()) {
           <div class="detail-footer" [class.disabled]="isUpdating">
-            <button *ngIf="selectedOrder()?.status === 0" (click)="showRejectInput.set(true)"
+            <button *ngIf="selectedOrder()?.status === 0" (click)="updateStatus(4)"
               class="btn-outline-danger" [disabled]="isUpdating">Từ chối</button>
 
             <button *ngIf="selectedOrder()?.status === 0" (click)="updateStatus(1)" class="btn-primary"

@@ -140,13 +140,19 @@ export class ProfileComponent implements OnInit {
     this.cancelInvoiceId.set(invoiceId);
   }
 
-  confirmCancelOrder(): void {
+  confirmCancelOrder(reason: string): void {
     const invoiceId = this.cancelInvoiceId();
     if (!invoiceId) return;
 
-    this.orderService.cancelOrder(invoiceId).subscribe({
+    const user = this.authUser();
+    if (!user?.id) {
+      this.toastService.error('KhÃ´ng tÃ¬m tháº¥y thÃ´ng tin tÃ i khoáº£n.');
+      this.cancelInvoiceId.set(null);
+      return;
+    }
+
+    this.orderService.cancelOrder(invoiceId, user.id.toString(), reason).subscribe({
       next: () => {
-        const user = this.authUser();
         if (user?.id) this.loadOrders(user.id.toString());
         this.closeDetail();
         this.cancelInvoiceId.set(null); // Close popup

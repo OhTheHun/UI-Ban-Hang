@@ -53,14 +53,19 @@
               </div>
             </td>
             <td class="text-center">
-              <span class="count-badge">{{ customer.totalOrders }}</span>
+              <span class="count-badge">{{ customer.completedOrderCount }}</span>
             </td>
             <td class="text-highlight">
-              {{ customer.totalSpent | number }} đ
+              {{ customer.completedOrderTotalAmount | number }} đ
             </td>
             <td>
               <div class="date-info">
-                {{ customer.lastOrderDate | date:'dd/MM/yyyy' }}
+                @if (customer.lastOrder) {
+                  {{ customer.lastOrder.code }} -
+                  {{ customer.lastOrder.createdTime | date:'dd/MM/yyyy' }}
+                } @else {
+                  N/A
+                }
               </div>
             </td>
             <td>

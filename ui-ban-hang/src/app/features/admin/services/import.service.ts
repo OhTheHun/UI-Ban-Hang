@@ -24,11 +24,18 @@ export class ImportService {
     if (filter.productName) {
       params = params.set('productName', filter.productName);
     }
+    if (filter.status) {
+      params = params.set('status', filter.status);
+    }
 
     return this.http.get<Import[]>(this.config.getEndpoint('import/list'), { params });
   }
 
   createImport(importData: Import): Observable<any> {
     return this.http.post(this.config.getEndpoint('import/create'), importData);
+  }
+
+  approveImport(importId: string): Observable<any> {
+    return this.http.put(this.config.getEndpoint(`import/approve/${importId}`), {});
   }
 }

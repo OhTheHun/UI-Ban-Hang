@@ -40,6 +40,10 @@ export class UserAdminService {
     return this.http.get<CustomerDTO[]>(`${this.baseUrl}/customers`);
   }
 
+  updateCustomerStatus(customerId: string, isActive: boolean): Observable<any> {
+    return this.http.put(`${this.baseUrl}/customer/${customerId}/status`, { isActive });
+  }
+
   createUser(request: CreateUserRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}/employee/create`, request);
   }

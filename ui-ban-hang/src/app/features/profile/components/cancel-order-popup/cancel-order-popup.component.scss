@@ -20,7 +20,7 @@ $border: #e2e8f0;
 .popup-window {
   background: white;
   width: 100%;
-  max-width: 400px;
+  max-width: 460px;
   border-radius: 20px;
   padding: 32px;
   text-align: center;
@@ -42,7 +42,7 @@ $border: #e2e8f0;
 }
 
 .popup-content {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   
   h3 {
     font-size: 1.25rem;
@@ -56,6 +56,67 @@ $border: #e2e8f0;
     color: $text-sub;
     line-height: 1.5;
     margin: 0;
+  }
+
+  .reason-field {
+    display: block;
+    margin-top: 22px;
+    text-align: left;
+
+    span {
+      display: block;
+      margin-bottom: 8px;
+      color: $text-main;
+      font-size: 0.875rem;
+      font-weight: 800;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 108px;
+      padding: 12px 14px;
+      border: 1px solid $border;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: $text-main;
+      font-size: 0.938rem;
+      line-height: 1.5;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $danger;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+      }
+    }
+  }
+
+  .reason-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 20px;
+    margin-top: 8px;
+    text-align: left;
+    font-size: 0.813rem;
+
+    .error-message {
+      color: $danger;
+      font-weight: 700;
+    }
+
+    .char-count {
+      margin-left: auto;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
   }
 }
 

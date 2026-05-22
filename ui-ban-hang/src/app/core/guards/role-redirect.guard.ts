@@ -5,7 +5,7 @@ import { AuthService } from '../../features/auth/services/auth.service';
 const ROLE_DEFAULT_ROUTES: Record<string, string> = {
   Admin: '/Operations/dashboard',
   Seller: '/Operations/approvals',
-  WareHouseManager: '/Operations/import',
+  WareHouseManager: '/Operations/products',
   HR: '/Operations/staff',
 };
 

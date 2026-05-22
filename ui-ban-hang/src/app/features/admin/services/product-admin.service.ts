@@ -52,7 +52,7 @@ export class ProductAdminService {
     if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
     if (params.status !== undefined && params.status !== null) httpParams = httpParams.set('status', params.status.toString());
 
-    return this.http.get<any>(this.config.getEndpoint('admin/product/list'), { params: httpParams }).pipe(
+    return this.http.get<any>(this.config.getEndpoint('warehouse/product/list'), { params: httpParams }).pipe(
       map((res: any) => {
         const products = Array.isArray(res)
           ? res
@@ -92,17 +92,16 @@ export class ProductAdminService {
       formData.append('Id', product.id);
     }
 
-    formData.append('CategoryId', product.categoryId);
-    formData.append('SupplierId', product.supplierId);
-    formData.append('DonViTinhId', product.donViTinhId);
     formData.append('ProductName', product.productName);
-    formData.append('Price', String(product.price ?? 0));
-    formData.append('DiscountPrice', String(product.discountPrice ?? 0));
-    formData.append('Cost', String(product.cost ?? 0));
-    formData.append('SKU', product.sku);
     formData.append('Description', product.description ?? '');
-    formData.append('Image_Url', product.imageUrl ?? '');
+    formData.append('Price', String(product.price ?? 0));
+    formData.append('CategoryId', product.categoryId);
+    formData.append('DonViTinhId', product.donViTinhId);
     formData.append('Status', String(product.status ?? 0));
+
+    if (includeId) {
+      formData.append('Image_Url', product.imageUrl ?? '');
+    }
 
     if (product.imageFile) {
       formData.append('ImageFile', product.imageFile);
